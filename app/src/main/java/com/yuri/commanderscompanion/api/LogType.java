@@ -1,0 +1,132 @@
+package com.yuri.commanderscompanion.api;
+
+import dbAPI.Column;
+import dbAPI.Constraint;
+import dbAPI.ConstraintsEnum;
+import dbAPI.DatabaseCell;
+import dbAPI.DatabaseDataType;
+import dbAPI.DatabaseValue;
+import dbAPI.IColumn;
+import dbAPI.IRow;
+import dbAPI.Row;
+
+/***Represents a type of log of soldiers and a row in the database*/
+public class LogType extends Row {
+	/**The column of this log's id*/
+	public static final IColumn LOG_TYPE_ID = new Column("log_type_id", 0, DatabaseDataType.INTEGER,
+			ConstraintsEnum.PRIMERY_KEY, ConstraintsEnum.AUTO_INCREMENT);
+	/**The column of the unit of this log*/
+	public static final IColumn UNIT_ID = new Column("unit_id", 1, DatabaseDataType.INTEGER,
+			new Constraint(ConstraintsEnum.FOREIGN_KEY, null).setInfo(OrganisationalUnits.NAME),
+			new Constraint(ConstraintsEnum.NOT_NULL, null));
+	/**The column of this log's name*/
+	public static final IColumn NAME = new Column("name", 2, DatabaseDataType.STRING,
+			ConstraintsEnum.NOT_NULL);
+	/**The column that determines whether to also include soldiers in subunits*/
+	public static final IColumn RECURSIVE = new Column("recursive", 3, DatabaseDataType.BOOLEAN,
+			ConstraintsEnum.NOT_NULL);
+	
+	/**The id of the last row*/
+	protected static int last_id = 0;
+	
+	/**The id of this log type*/
+	protected int id;
+	/**The unit of this log type*/
+	protected OrganisationalUnit unit;
+	/**The name of this log type*/
+	protected String name;
+	/**Whether to include soldiers in subunits in this log*/
+	protected boolean recursive;
+
+	/**Initialize a new log type with cells*/
+	protected LogType(DatabaseCell... cells) { super(cells); }
+	
+	public LogType(OrganisationalUnit unit, String name, boolean recursive) {
+		this(
+			new DatabaseCell(LOG_TYPE_ID, null, DatabaseDataType.INTEGER),
+			new DatabaseCell(UNIT_ID, unit.id, DatabaseDataType.INTEGER),
+			new DatabaseCell(NAME, name, DatabaseDataType.STRING),
+			new DatabaseCell(RECURSIVE, recursive, DatabaseDataType.BOOLEAN)
+		);
+		this.id = last_id++;
+		this.name = name;
+		this.recursive = recursive;
+		this.unit = unit;
+	}
+	
+	/**Initialize a new log type from a log type row
+	 * @param row The log type row
+	 */
+	public LogType(IRow row) {
+		this(row.getCell(LOG_TYPE_ID), row.getCell(UNIT_ID), row.getCell(NAME), row.getCell(RECURSIVE));
+		this.id = row.getCell(LOG_TYPE_ID).Value.getInteger();
+		if (id > last_id) {
+			last_id = id;
+		}
+		this.name = row.getCell(NAME).Value.getString();
+		this.recursive = row.getCell(RECURSIVE).Value.getBoolean();
+		this.unit = Database.UNITS.getByPrimeryKey(row.getCell(UNIT_ID).Value);
+	}
+	
+	/**Get the name of this log type
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**Set the name of this log type
+	 * @param name the name to set
+	 */
+	public void setName(String name) {
+		this.name = name;
+		setValue(NAME, new DatabaseValue(name, DatabaseDataType.STRING));
+	}
+
+	/**Check whether to include subunits' soldiers
+	 * @return True if yes, otherwise false
+	 */
+	public boolean isRecursive() {
+		return recursive;
+	}
+
+	/** Set the value of whether to include subunits' soldiers
+	 * @param recursive whether to include subunits' soldiers
+	 */
+	public void setRecursive(boolean recursive) {
+		this.recursive = recursive;
+		setValue(RECURSIVE, new DatabaseValue(recursive, DatabaseDataType.BOOLEAN));
+	}
+
+	/**Get this log's id
+	 * @return the id
+	 */
+	public int getId() {
+		return id;
+	}
+
+	/**Get the unit of this log's soldiers
+	 * @return the unit
+	 */
+	public OrganisationalUnit getUnit() {
+		return unit;
+	}
+
+	/**Get all the columns of this row
+	 * @return The columns of this row
+	 */
+	public static IColumn[] getStaticColumns() {
+		return new IColumn[] {LOG_TYPE_ID, UNIT_ID, NAME, RECURSIVE};
+	}
+	
+	@Override
+	public IColumn[] getColumns() {
+		return getStaticColumns();
+	}
+	
+	@Override
+	public String toString() {
+		return id + "\t" + name + " log for " + unit;
+	}
+
+}
