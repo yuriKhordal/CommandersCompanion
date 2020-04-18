@@ -2,24 +2,24 @@ package com.yuri.commanderscompanion.api;
 
 import dbAPI.Column;
 import dbAPI.Constraint;
-import dbAPI.ConstraintsEnum;
 import dbAPI.DatabaseCell;
 import dbAPI.DatabaseDataType;
+import dbAPI.ForeignKeyConstraint;
 import dbAPI.IColumn;
 import dbAPI.IRow;
 import dbAPI.Row;
+import dbAPI.SingularPrimaryKey;
 
 /**Represents a weapon and a database row*/
 public class Weapon extends Row{
 	/**The column of the weapon's serial*/
 	public static final IColumn SERIAL = new Column("serial", 0, DatabaseDataType.INTEGER,
-			ConstraintsEnum.PRIMERY_KEY);
+			Constraint.BASIC_PRIMARY_KEY_CONSTRAINT);
 	/**The column of the weapon's sight's serial*/
-	//column constructor sets the constraint's column to itself so null is acceptable
 	public static final IColumn SIGHT_SERIAL = new Column("sight_serial", 1, DatabaseDataType.INTEGER,
-			new Constraint(ConstraintsEnum.FOREIGN_KEY, null).setInfo(Sights.NAME));
+			new ForeignKeyConstraint("sight_serial", Sights.NAME + '(' + Sight.SERIAL.getName() + ')'));
 	/**The column of the weapon's type*/
-	public static final IColumn TYPE = new Column("type", 2, DatabaseDataType.STRING, ConstraintsEnum.NOT_NULL);
+	public static final IColumn TYPE = new Column("type", 2, DatabaseDataType.STRING, Constraint.NOT_NULL);
 	
 	/**The type of the weapon, eg M4, Tavor etc*/
 	private String type;
@@ -33,11 +33,11 @@ public class Weapon extends Row{
 	 * @param serial The serial of the weapon
 	 */
 	public Weapon(String type, int serial){
-		super(new DatabaseCell[] {
+		super(
 				new DatabaseCell(SERIAL, serial, DatabaseDataType.INTEGER),
 				new DatabaseCell(SIGHT_SERIAL, null, DatabaseDataType.INTEGER),
 				new DatabaseCell(TYPE, type, DatabaseDataType.STRING)
-		});
+		);
 		
 		this.type = type;
 		this.sight = null;
@@ -50,11 +50,11 @@ public class Weapon extends Row{
 	 * @param serial The serial of the weapon
 	 */
 	public Weapon(String type, Sight s, int serial){
-		super(new DatabaseCell[] {
+		super(
 				new DatabaseCell(SERIAL, serial, DatabaseDataType.INTEGER),
 				new DatabaseCell(SIGHT_SERIAL, s.getSerial(), DatabaseDataType.INTEGER),
 				new DatabaseCell(TYPE, type, DatabaseDataType.STRING)
-		});
+		);
 		
 		this.type = type;
 		this.sight = s;
@@ -65,13 +65,12 @@ public class Weapon extends Row{
 	 * @param row The weapon row
 	 */
 	public Weapon(IRow row) {
-		super(new DatabaseCell[] {
-				row.getCell(SERIAL), row.getCell(SIGHT_SERIAL), row.getCell(TYPE)
-		});
+//		super(row.getCell(SERIAL), row.getCell(SIGHT_SERIAL), row.getCell(TYPE));
+		super(GeneralHelper.getCells(row, Weapons.COLUMNS));
 		
 		this.type = row.getCell(TYPE).Value.getString();
-		this.serial = row.getCell(SERIAL).Value.getInteger();
-		this.sight = Database.SIGHTS.getByPrimeryKey(row.getCell(SIGHT_SERIAL).Value);
+		this.serial = row.getCell(SERIAL).Value.getInt();
+		this.sight = Database.SIGHTS.getRow(new SingularPrimaryKey(row.getCell(SIGHT_SERIAL)));
 	}
 
 	/**Get all the columns in the table
@@ -107,6 +106,34 @@ public class Weapon extends Row{
 	 */
 	public int getSerial(){
 		return serial;
+	}
+
+	@Override
+	public boolean hasPrimaryKey() {
+		return true;
+	}
+
+	@Override
+	public IColumn[] getColumns() {
+		return getStaticColumns();
+	}
+
+	@Override
+	public Weapon clone() {
+		/*if (hasSight()) {
+			return new Weapon(type, sight, serial);
+		} else {
+			return  new Weapon(type, serial);
+		}*/
+		return new Weapon(this);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (!super.equals(obj)) { return false; }
+		Weapon weapon = (Weapon)obj;
+		if (weapon.hasSight() != hasSight() || (weapon.hasSight() && !weapon.sight.equals(sight))) { return false; }
+		return weapon.serial == serial && weapon.type == type;
 	}
 
 	@Override

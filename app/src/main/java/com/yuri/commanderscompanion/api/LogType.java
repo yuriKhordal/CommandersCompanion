@@ -2,29 +2,30 @@ package com.yuri.commanderscompanion.api;
 
 import dbAPI.Column;
 import dbAPI.Constraint;
-import dbAPI.ConstraintsEnum;
 import dbAPI.DatabaseCell;
 import dbAPI.DatabaseDataType;
 import dbAPI.DatabaseValue;
+import dbAPI.ForeignKeyConstraint;
 import dbAPI.IColumn;
 import dbAPI.IRow;
 import dbAPI.Row;
+import dbAPI.SingularPrimaryKey;
 
 /***Represents a type of log of soldiers and a row in the database*/
 public class LogType extends Row {
 	/**The column of this log's id*/
 	public static final IColumn LOG_TYPE_ID = new Column("log_type_id", 0, DatabaseDataType.INTEGER,
-			ConstraintsEnum.PRIMERY_KEY, ConstraintsEnum.AUTO_INCREMENT);
+			Constraint.BASIC_PRIMARY_KEY_CONSTRAINT/*, Constraint.AUTO_INCREMENT*/);
 	/**The column of the unit of this log*/
 	public static final IColumn UNIT_ID = new Column("unit_id", 1, DatabaseDataType.INTEGER,
-			new Constraint(ConstraintsEnum.FOREIGN_KEY, null).setInfo(OrganisationalUnits.NAME),
-			new Constraint(ConstraintsEnum.NOT_NULL, null));
+			new ForeignKeyConstraint("unit_id", OrganisationalUnits.NAME + '(' + OrganisationalUnit.ID.getName() + ')'),
+			Constraint.NOT_NULL);
 	/**The column of this log's name*/
 	public static final IColumn NAME = new Column("name", 2, DatabaseDataType.STRING,
-			ConstraintsEnum.NOT_NULL);
+			Constraint.NOT_NULL);
 	/**The column that determines whether to also include soldiers in subunits*/
 	public static final IColumn RECURSIVE = new Column("recursive", 3, DatabaseDataType.BOOLEAN,
-			ConstraintsEnum.NOT_NULL);
+			Constraint.NOT_NULL);
 	
 	/**The id of the last row*/
 	protected static int last_id = 0;
@@ -58,14 +59,15 @@ public class LogType extends Row {
 	 * @param row The log type row
 	 */
 	public LogType(IRow row) {
-		this(row.getCell(LOG_TYPE_ID), row.getCell(UNIT_ID), row.getCell(NAME), row.getCell(RECURSIVE));
-		this.id = row.getCell(LOG_TYPE_ID).Value.getInteger();
+//		this(row.getCell(LOG_TYPE_ID), row.getCell(UNIT_ID), row.getCell(NAME), row.getCell(RECURSIVE));
+		this(GeneralHelper.getCells(row, LogTypes.COLUMNS));
+		this.id = row.getCell(LOG_TYPE_ID).Value.getInt();
 		if (id > last_id) {
 			last_id = id;
 		}
 		this.name = row.getCell(NAME).Value.getString();
 		this.recursive = row.getCell(RECURSIVE).Value.getBoolean();
-		this.unit = Database.UNITS.getByPrimeryKey(row.getCell(UNIT_ID).Value);
+		this.unit = Database.UNITS.getRow(new SingularPrimaryKey(row.getCell(UNIT_ID)));
 	}
 	
 	/**Get the name of this log type
@@ -118,10 +120,28 @@ public class LogType extends Row {
 	public static IColumn[] getStaticColumns() {
 		return new IColumn[] {LOG_TYPE_ID, UNIT_ID, NAME, RECURSIVE};
 	}
-	
+
+	@Override
+	public boolean hasPrimaryKey() {
+		return true;
+	}
+
 	@Override
 	public IColumn[] getColumns() {
 		return getStaticColumns();
+	}
+
+	@Override
+	public LogType clone() {
+		return new LogType(this);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (!super.equals(obj)) { return false; }
+		LogType logType = (LogType)obj;
+		return logType.id == id && logType.recursive == recursive && logType.name == name
+				&& logType.unit.equals(unit);
 	}
 	
 	@Override

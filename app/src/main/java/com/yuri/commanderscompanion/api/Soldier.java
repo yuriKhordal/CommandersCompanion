@@ -4,35 +4,36 @@ import java.util.ArrayList;
 
 import dbAPI.Column;
 import dbAPI.Constraint;
-import dbAPI.ConstraintsEnum;
 import dbAPI.DatabaseCell;
 import dbAPI.DatabaseDataType;
 import dbAPI.DatabaseValue;
+import dbAPI.ForeignKeyConstraint;
 import dbAPI.IColumn;
 import dbAPI.IRow;
 import dbAPI.Row;
+import dbAPI.SingularPrimaryKey;
 
 /**Represents a soldier and a database row*/
 public class Soldier extends Row{
 	/**The column of the soldier's service number*/
 	public static final Column ID = new Column("id", 0, DatabaseDataType.INTEGER,
-ConstraintsEnum.PRIMERY_KEY);
+			Constraint.BASIC_PRIMARY_KEY_CONSTRAINT);
 	/**The column of the soldier's unit*/
 	public static final Column UNIT_ID = new Column("unit_id", 1, DatabaseDataType.INTEGER,
-new Constraint(ConstraintsEnum.FOREIGN_KEY, null).setInfo(OrganisationalUnits.NAME),
-new Constraint(ConstraintsEnum.NOT_NULL, null));
+			new ForeignKeyConstraint("unit_id", OrganisationalUnits.NAME + '(' + OrganisationalUnit.ID.getName() + ')'),
+			Constraint.NOT_NULL);
 	/**The column that tells whether it is a commander or not*/
 	public static final Column IS_COMMANDER = new Column("is_commander", 2, DatabaseDataType.BOOLEAN,
-			ConstraintsEnum.NOT_NULL);
+			Constraint.NOT_NULL);
 	/**The column of the soldier's name*/
 	public static final Column NAME = new Column("name", 3, DatabaseDataType.STRING,
-ConstraintsEnum.NOT_NULL);
+			Constraint.NOT_NULL);
 	/**The column of the soldier's rank*/
 	public static final Column RANK = new Column("rank", 4, DatabaseDataType.STRING);
 	/**The column of the soldier's weapon serial*/
 	//column constructor sets the constraint's column to itself so null is acceptable
-	public static final Column WEAPON_SERIAL = new Column("weapon_serial", 5,
-DatabaseDataType.INTEGER, new Constraint(ConstraintsEnum.FOREIGN_KEY, null).setInfo(Weapons.NAME));
+	public static final Column WEAPON_SERIAL = new Column("weapon_serial", 5, DatabaseDataType.INTEGER,
+			new ForeignKeyConstraint("weapon_serial", Weapons.NAME + '(' + Weapon.SERIAL.getName() + ')'));
 	
 	/**This soldier's service number*/
 	protected int id;
@@ -113,9 +114,11 @@ DatabaseDataType.INTEGER, new Constraint(ConstraintsEnum.FOREIGN_KEY, null).setI
 	 * @param row The soldier row
 	 */
 	public Soldier(IRow row) {
-		this(row.getCell(ID), row.getCell(UNIT_ID), row.getCell(IS_COMMANDER), row.getCell(NAME), row.getCell(RANK), row.getCell(WEAPON_SERIAL));
-		this.id = row.getCell(ID).Value.getInteger();
-		this.unit = Database.UNITS.getByPrimeryKey(row.getCell(UNIT_ID).Value);
+//		this(row.getCell(ID), row.getCell(UNIT_ID), row.getCell(IS_COMMANDER), row.getCell(NAME),
+//				row.getCell(RANK), row.getCell(WEAPON_SERIAL));
+		this(GeneralHelper.getCells(row, Soldiers.COLUMNS));
+		this.id = row.getCell(ID).Value.getInt();
+		this.unit = Database.UNITS.getRow(new SingularPrimaryKey(row.getCell(UNIT_ID)));
 		this.isCommander = row.getCell(IS_COMMANDER).Value.getBoolean();
 		if (isCommander) {
 			this.unit.commander = this;
@@ -124,7 +127,7 @@ DatabaseDataType.INTEGER, new Constraint(ConstraintsEnum.FOREIGN_KEY, null).setI
 		}
 		this.name = row.getCell(NAME).Value.getString();
 		this.rank = row.getCell(RANK).Value.getString();
-		this.weapon = Database.WEAPONS.getByPrimeryKey(row.getCell(WEAPON_SERIAL).Value);
+		this.weapon = Database.WEAPONS.getRow(new SingularPrimaryKey(row.getCell(WEAPON_SERIAL)));
 	}
 	
 	/**Get all the columns in the row
@@ -194,14 +197,30 @@ DatabaseDataType.INTEGER, new Constraint(ConstraintsEnum.FOREIGN_KEY, null).setI
 	}
 
 	@Override
-	public String toString(){
-		return this.id + ": " + rank + name;
+	public boolean hasPrimaryKey() {
+		return true;
 	}
 
 	@Override
 	public IColumn[] getColumns() {
-		//return new IColumn[] { ID, NAME, RANK, WEAPON_SERIAL };
 		return getStaticColumns();
+	}
+
+	@Override
+	public Soldier clone() {
+		return new Soldier(this);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (!super.equals(obj)) { return false; }
+		Soldier soldier = (Soldier)obj;
+		return  soldier.id == id;
+	}
+
+	@Override
+	public String toString(){
+		return this.id + ": " + rank + name;
 	}
 	
 	

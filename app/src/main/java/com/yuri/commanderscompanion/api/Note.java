@@ -1,32 +1,30 @@
-/**
- * 
- */
 package com.yuri.commanderscompanion.api;
 
 import dbAPI.Column;
 import dbAPI.Constraint;
-import dbAPI.ConstraintsEnum;
 import dbAPI.DatabaseCell;
 import dbAPI.DatabaseDataType;
 import dbAPI.DatabaseValue;
+import dbAPI.ForeignKeyConstraint;
 import dbAPI.IColumn;
 import dbAPI.IRow;
 import dbAPI.Row;
+import dbAPI.SingularPrimaryKey;
 
 /**Represents a note of either a soldier or a unit and a row in the database*/
 public class Note extends Row {
 	/**A column of the note's id*/
 	public static final IColumn ID = new Column("id", 0, DatabaseDataType.INTEGER,
-			ConstraintsEnum.PRIMERY_KEY, ConstraintsEnum.AUTO_INCREMENT);
+			Constraint.BASIC_PRIMARY_KEY_CONSTRAINT/*, Constraint.AUTO_INCREMENT*/);
 	/**A column of the note's type id*/
 	public static final IColumn TYPE_ID = new Column("type_id", 1, DatabaseDataType.INTEGER,
-			new Constraint(ConstraintsEnum.FOREIGN_KEY, null).setInfo(NoteTypes.NAME),
-			new Constraint(ConstraintsEnum.NOT_NULL, null));
+			new ForeignKeyConstraint("type_id", NoteTypes.NAME + '(' + NoteType.ID.getName() + ')'),
+			Constraint.NOT_NULL);
 	/**A column of the note's message's head*/
 	public static final IColumn HEAD = new Column("head", 2, DatabaseDataType.STRING);
 	/**A column of the note's message's body*/
 	public static final IColumn BODY = new Column("body", 3, DatabaseDataType.STRING);
-	
+
 	/**The id of the last note*/
 	protected static int last_id = 0;
 	
@@ -68,9 +66,10 @@ public class Note extends Row {
 	}
 	
 	public Note(IRow row) {
-		this(row.getCell(ID), row.getCell(TYPE_ID), row.getCell(HEAD), row.getCell(BODY));
-		id = row.getCell(ID).Value.getInteger();
-		type = Database.NOTE_TYPES.getByPrimeryKey(row.getCell(TYPE_ID).Value);
+//		this(row.getCell(ID), row.getCell(TYPE_ID), row.getCell(HEAD), row.getCell(BODY));
+		this(GeneralHelper.getCells(row, Notes.COLUMNS));
+		id = row.getCell(ID).Value.getInt();
+		type = Database.NOTE_TYPES.getRow(new SingularPrimaryKey(row.getCell(TYPE_ID)));
 		if (type.ofSoldier) {
 			type.ownerS.notes.add(this);
 		} else {
@@ -124,13 +123,30 @@ public class Note extends Row {
 		return type;
 	}
 	
-	public static IColumn[] getStaticColumn() {
+	public static IColumn[] getStaticColumns() {
 		return new IColumn[] { ID, TYPE_ID, HEAD, BODY };
 	}
-	
+
+	@Override
+	public boolean hasPrimaryKey() {
+		return true;
+	}
+
 	@Override
 	public IColumn[] getColumns() {
-		return getStaticColumn();
+		return getStaticColumns();
+	}
+
+	@Override
+	public Note clone() {
+		return new Note(this);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (!super.equals(obj)) { return false; }
+		Note note = (Note)obj;
+		return note.id == id && note.type.equals(type) && note.head == head && note.body == body;
 	}
 	
 	@Override

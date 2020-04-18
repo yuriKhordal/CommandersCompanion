@@ -3,19 +3,34 @@ package com.yuri.commanderscompanion.api;
 import dbAPI.IColumn;
 import dbAPI.IDatabaseHelper;
 import dbAPI.IRow;
+import dbAPI.IRowConverter;
+import dbAPI.PrimaryKeyConstraint;
+import dbAPI.SinglePrimaryKeyCacheTable;
 
 /**Represents a notes table*/
-public class Notes extends Table<Note> {
+public class Notes extends SinglePrimaryKeyCacheTable<Note> {
 	/**The name of the table*/
 	public static final String NAME = "Notes";
+	/**The primary key of the table*/
+	public static final PrimaryKeyConstraint PRIMARY_KEY_CONSTRAINT = new PrimaryKeyConstraint(Note.ID);
 	/**All the columns in the table*/
-	public static final IColumn[] COLUMNS = Note.getStaticColumn();
+	public static final IColumn[] COLUMNS = Note.getStaticColumns();
 
-	/**Initialize a new notes table with a helper to the database
-	 * @param helper The helper for the database
+	/**Initialize a new notes table*/
+	protected Notes() {
+		super(NAME, PRIMARY_KEY_CONSTRAINT, null, null, GeneralHelper.getNonPrimaryColumns(COLUMNS));
+	}
+
+	/**Initialize a new notes table with a helper
+	 * @param helper The helper to the database
 	 */
 	public Notes(IDatabaseHelper helper) {
-		super(COLUMNS, helper);
+		super(helper, Notes::convert, NAME, PRIMARY_KEY_CONSTRAINT, null, null, GeneralHelper.getNonPrimaryColumns(COLUMNS));
+	}
+
+	/**@see IRowConverter#convertFromIRow(IRow) */
+	protected static Note convert(IRow row){
+		return new Note(row);
 	}
 
 	@Override
@@ -24,14 +39,16 @@ public class Notes extends Table<Note> {
 	}
 
 	@Override
-	protected void addTFromIRow(IRow row) {
-		Note note = new Note(row);
-		rows.add(note);
-		rowsMap.put(note.id, note);
-	}
+	public Notes clone() {
+		Notes notes = new Notes();
+		notes.helper = helper.clone();
+		notes.converter = converter;
 
-	@Override
-	public IColumn getPrimeryKey() {
-		return Note.ID;
+		for (Note note : rows){
+			Note cloned = note.clone();
+			notes.add(cloned);
+		}
+
+		return notes;
 	}
 }

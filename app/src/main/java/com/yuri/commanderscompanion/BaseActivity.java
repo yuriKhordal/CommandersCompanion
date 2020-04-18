@@ -9,8 +9,6 @@ import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
-import com.yuri.commanderscompanion.api.AppSettings;
-
 import org.jetbrains.annotations.NotNull;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -31,9 +29,9 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (!AppSettings.isInitialized()){
+        /*if (!AppSettings.isInitialized()){
             AppSettings.init(getSharedPreferences(AppSettings.PREFERENCES_NAME, MODE_PRIVATE));
-        }
+        }*/
 
         setViews();
         setSupportActionBar(toolbar);

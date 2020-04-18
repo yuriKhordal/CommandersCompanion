@@ -4,29 +4,30 @@ import java.time.LocalDateTime;
 
 import dbAPI.Column;
 import dbAPI.Constraint;
-import dbAPI.ConstraintsEnum;
 import dbAPI.DatabaseCell;
 import dbAPI.DatabaseDataType;
 import dbAPI.DatabaseValue;
+import dbAPI.ForeignKeyConstraint;
 import dbAPI.IColumn;
 import dbAPI.IRow;
 import dbAPI.Row;
+import dbAPI.SingularPrimaryKey;
 
 /**Represents a disciplinary notice and a row in a table*/
 public class Notice extends Row {
 	/**The column of the id of the notice*/
 	public static final IColumn ID = new Column("id", 0, DatabaseDataType.INTEGER,
-			ConstraintsEnum.AUTO_INCREMENT, ConstraintsEnum.PRIMERY_KEY);
+			/*Constraint.AUTO_INCREMENT, */Constraint.BASIC_PRIMARY_KEY_CONSTRAINT);
 	/**The column of the id of the notice*/
 	public static final IColumn SOLDIER_ID = new Column("soldier_id", 1, DatabaseDataType.INTEGER,
-			new Constraint(ConstraintsEnum.FOREIGN_KEY, null).setInfo(Soldiers.NAME),
-			new Constraint(ConstraintsEnum.NOT_NULL, null));
+			new ForeignKeyConstraint("soldier_id", Soldiers.NAME + '(' + Soldier.ID.getName() + ')'),
+			Constraint.NOT_NULL);
 	/**The column of the time of the notice*/
 	public static final IColumn DATE = new Column("date", 2, DatabaseDataType.DATETIME,
-			ConstraintsEnum.NOT_NULL);
+			Constraint.NOT_NULL);
 	/**The column of the summary of the act*/
 	public static final IColumn SUMMARY = new Column("summary", 3, DatabaseDataType.STRING,
-			ConstraintsEnum.NOT_NULL);
+			Constraint.NOT_NULL);
 	/**The column of the punishment*/
 	public static final IColumn PUNISHMENT = new Column("punishment", 4, DatabaseDataType.STRING);
 	
@@ -68,9 +69,10 @@ public class Notice extends Row {
 	}
 
 	public Notice(IRow row) {
-		this(row.getCell(ID), row.getCell(SOLDIER_ID),row.getCell(DATE),row.getCell(SUMMARY),row.getCell(PUNISHMENT));
-		this.id = row.getCell(ID).Value.getInteger();
-		this.soldier = Database.SOLDIERS.getByPrimeryKey( row.getCell(SOLDIER_ID).Value );
+//		this(row.getCell(ID), row.getCell(SOLDIER_ID),row.getCell(DATE),row.getCell(SUMMARY),row.getCell(PUNISHMENT));
+		this(GeneralHelper.getCells(row, Notices.COLUMNS));
+		this.id = row.getCell(ID).Value.getInt();
+		this.soldier = Database.SOLDIERS.getRow(new SingularPrimaryKey(row.getCell(SOLDIER_ID)));
 		this.soldier.notices.add(this);
 		this.date = row.getCell(DATE).Value.getDateTime();
 		this.summary = row.getCell(SUMMARY).Value.getString();
@@ -139,10 +141,28 @@ public class Notice extends Row {
 	public static IColumn[] getStaticColumns() {
 		return new IColumn[] { ID, SOLDIER_ID, DATE, SUMMARY, PUNISHMENT };
 	}
+
+	@Override
+	public boolean hasPrimaryKey() {
+		return true;
+	}
 	
 	@Override
 	public IColumn[] getColumns() {
 		return getStaticColumns();
+	}
+
+	@Override
+	public Notice clone() {
+		return new Notice(this);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (!super.equals(obj)) { return false; }
+		Notice notice = (Notice)obj;
+		return notice.id == id && notice.soldier.equals(soldier) && notice.date.equals(date) &&
+				notice.summary == summary && notice.punishment == punishment;
 	}
 	
 	@Override

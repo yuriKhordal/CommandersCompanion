@@ -24,6 +24,7 @@ public class SQLiteDataReader implements IDatabaseReader {
      */
     public SQLiteDataReader(Cursor cursor){
         this.cursor = cursor;
+        this.cursor.moveToFirst();
     }
 
     @Override
@@ -40,7 +41,7 @@ public class SQLiteDataReader implements IDatabaseReader {
 
     @Override
     public IRow[] getAllRows() {
-        IRow rows[] = new IRow[cursor.getCount()];
+        IRow[] rows = new IRow[cursor.getCount()];
         for(int i = 0; i < rows.length; i++){
             rows[i] = next();
         }
@@ -54,17 +55,17 @@ public class SQLiteDataReader implements IDatabaseReader {
 
     @Override
     public IRow next() {
-        String names[] = cursor.getColumnNames();
-        DatabaseCell cells[] = new DatabaseCell[names.length];
+        String[] names = cursor.getColumnNames();
+        DatabaseCell[] cells = new DatabaseCell[names.length];
         for (int i = 0; i < names.length; i++){
             IColumn col;
             DatabaseValue val;
             switch(cursor.getType(i)){
-                case Cursor.FIELD_TYPE_NULL:
+                /*case Cursor.FIELD_TYPE_NULL:
                     val = new DatabaseValue(null, DatabaseDataType.INTEGER);
-                    break;
+                    break;*/
                 case Cursor.FIELD_TYPE_INTEGER:
-                    val = new DatabaseValue(cursor.getLong(i), DatabaseDataType.INTEGER);
+                    val = new DatabaseValue(cursor.getInt(i), DatabaseDataType.INTEGER);
                     break;
                 case Cursor.FIELD_TYPE_FLOAT:
                     val = new DatabaseValue(cursor.getDouble(i), DatabaseDataType.DOUBLE);
@@ -85,6 +86,11 @@ public class SQLiteDataReader implements IDatabaseReader {
         cursor.moveToNext();
 
         return new Row(cells);
+    }
+
+    @Override
+    public void skip() {
+        cursor.moveToNext();
     }
 
     @NonNull

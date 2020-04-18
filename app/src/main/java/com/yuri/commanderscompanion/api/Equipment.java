@@ -2,30 +2,31 @@ package com.yuri.commanderscompanion.api;
 
 import dbAPI.Column;
 import dbAPI.Constraint;
-import dbAPI.ConstraintsEnum;
 import dbAPI.DatabaseCell;
 import dbAPI.DatabaseDataType;
 import dbAPI.DatabaseValue;
+import dbAPI.ForeignKeyConstraint;
 import dbAPI.IColumn;
 import dbAPI.IRow;
 import dbAPI.Row;
+import dbAPI.SingularPrimaryKey;
 
 /**Represents a soldier's equipment and a row in a database*/
 public class Equipment extends Row {
-	public static final IColumn SOLDIER_EQUIPMENT_ID = new Column("soldier_eqipment_id", 0, DatabaseDataType.INTEGER,
-			ConstraintsEnum.PRIMERY_KEY, ConstraintsEnum.AUTO_INCREMENT);
+	public static final IColumn SOLDIER_EQUIPMENT_ID = new Column("soldier_equipment_id", 0, DatabaseDataType.INTEGER,
+			Constraint.BASIC_PRIMARY_KEY_CONSTRAINT/*, Constraint.AUTO_INCREMENT*/);
 	/**The column of the equipment's owner id*/
 	public static final IColumn SOLDIER_ID = new Column("soldier_id", 1, DatabaseDataType.INTEGER,
-			new Constraint(ConstraintsEnum.FOREIGN_KEY, null).setInfo(Soldiers.NAME),
-			new Constraint(ConstraintsEnum.NOT_NULL, null));
+			new ForeignKeyConstraint("soldier_id", Soldiers.NAME + '(' + Soldier.ID.getName() + ')'),
+			Constraint.NOT_NULL);
 	/**The column of the equipment's serial*/
 	public static final IColumn SERIAL = new Column("serial", 2, DatabaseDataType.INTEGER);
 	/**The column of the equipment's name*/
 	public static final IColumn NAME = new Column("name", 3, DatabaseDataType.STRING,
-			ConstraintsEnum.NOT_NULL);
+			Constraint.NOT_NULL);
 	/**The column of the equipment's status*/
 	public static final IColumn STATUS = new Column("status", 4, DatabaseDataType.STRING,
-			ConstraintsEnum.NOT_NULL);
+			Constraint.NOT_NULL);
 	
 	/**Software auto incrementation*/
 	protected static int last_id = 0;
@@ -48,15 +49,15 @@ public class Equipment extends Row {
 	 * @param status Equipment's status
 	 */
 	public Equipment(int owner_id, int serial, String name, EquipmentStatus status) {
-		super(new DatabaseCell[] {
+		super(
 				new DatabaseCell(SOLDIER_EQUIPMENT_ID, null, DatabaseDataType.INTEGER),
 				new DatabaseCell(SOLDIER_ID, owner_id, DatabaseDataType.INTEGER),
 				new DatabaseCell(SERIAL, serial, DatabaseDataType.INTEGER),
 				new DatabaseCell(NAME, name, DatabaseDataType.STRING),
 				new DatabaseCell(STATUS, status.toString(), DatabaseDataType.STRING)
-		});
+		);
 		this.soldier_equipment_id = last_id++;
-		this.owner = Database.SOLDIERS.getByPrimeryKey(new DatabaseValue(owner_id, DatabaseDataType.INTEGER));
+		this.owner = Database.SOLDIERS.getRow(new SingularPrimaryKey(SOLDIER_ID, owner_id, DatabaseDataType.INTEGER));
 		this.owner.equipment.add(this);
 		this.serial = serial;
 		this.name = name;
@@ -65,43 +66,43 @@ public class Equipment extends Row {
 	
 	/**Initialize a new equipment with owner id, name, and status
 	 * @param owner_id Equipment's owner
-	 * @param serial Equipment's serial
 	 * @param name Equipment's name
 	 * @param status Equipment's status
 	 */
 	public Equipment(int owner_id, String name, EquipmentStatus status) {
-		super(new DatabaseCell[] {
+		super(
 				new DatabaseCell(SOLDIER_EQUIPMENT_ID, null, DatabaseDataType.INTEGER),
 				new DatabaseCell(SOLDIER_ID, owner_id, DatabaseDataType.INTEGER),
 				new DatabaseCell(SERIAL, null, DatabaseDataType.INTEGER),
 				new DatabaseCell(NAME, name, DatabaseDataType.STRING),
 				new DatabaseCell(STATUS, status.toString(), DatabaseDataType.STRING)
-		});
+		);
 		this.soldier_equipment_id = last_id++;
-		this.owner = Database.SOLDIERS.getByPrimeryKey(new DatabaseValue(owner_id, DatabaseDataType.INTEGER));
+		this.owner = Database.SOLDIERS.getRow(new SingularPrimaryKey(SOLDIER_ID, owner_id, DatabaseDataType.INTEGER));
 		this.owner.equipment.add(this);
 		this.name = name;
 		this.status = status;
 	}
 	
 	public Equipment(IRow row) {
-		super(new DatabaseCell[] {
-				row.getCell(SOLDIER_EQUIPMENT_ID), row.getCell(SOLDIER_ID), row.getCell(SERIAL), row.getCell(NAME), row.getCell(STATUS)
-		});
-		this.soldier_equipment_id = row.getCell(SOLDIER_EQUIPMENT_ID).Value.getInteger();
+//		super(row.getCell(SOLDIER_EQUIPMENT_ID), row.getCell(SOLDIER_ID), row.getCell(SERIAL),
+//				row.getCell(NAME), row.getCell(STATUS));
+		super(GeneralHelper.getCells(row, EquipmentTable.COLUMNS));
+		this.soldier_equipment_id = row.getCell(SOLDIER_EQUIPMENT_ID).Value.getInt();
 		last_id = soldier_equipment_id > last_id ? soldier_equipment_id+1 : last_id;
-		this.owner = Database.SOLDIERS.getByPrimeryKey(row.getCell(SOLDIER_ID).Value);
+		this.owner = Database.SOLDIERS.getRow(new SingularPrimaryKey(row.getCell(SOLDIER_ID)));
 		this.owner.equipment.add(this);
-		this.serial = row.getCell(SERIAL).Value.getInteger();
+		this.serial = row.getCell(SERIAL).Value.getInt();
 		this.name = row.getCell(NAME).Value.getString();
 		this.status = EquipmentStatus.fromString(row.getCell(STATUS).Value.getString());
+		//pkey = new SingularPrimaryKey(row.getCell(SOLDIER_EQUIPMENT_ID));
 	}
 	
 	/**Get all the columns of the row
 	 * @return All the columns
 	 */
 	public static IColumn[] getStaticColumns(){
-		return new IColumn[] {SOLDIER_ID, SERIAL, NAME, STATUS};
+		return new IColumn[] {SOLDIER_EQUIPMENT_ID, SOLDIER_ID, SERIAL, NAME, STATUS};
 	}
 	
 	/**Get soldier-equipment unique id
@@ -147,10 +148,28 @@ public class Equipment extends Row {
 		this.status = status;
 		this.setValue(STATUS, new DatabaseValue(status.toString(), DatabaseDataType.STRING));
 	}
-	
+
+	@Override
+	public boolean hasPrimaryKey() {
+		return true;
+	}
+
 	@Override
 	public IColumn[] getColumns() {
 		return getStaticColumns();
+	}
+
+	@Override
+	public Equipment clone() {
+		return new Equipment(this);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (!super.equals(obj)) { return false; }
+		Equipment equipment = (Equipment)obj;
+		return equipment.soldier_equipment_id == soldier_equipment_id && equipment.owner.equals(owner) &&
+				equipment.serial == serial && equipment.name == name && equipment.status == status;
 	}
 
 	@Override
@@ -158,7 +177,7 @@ public class Equipment extends Row {
 		return name + ":\t" + status + "\t" + serial != null ? serial.toString() : "";
 	}
 
-	/**Represents the status of the equimpent*/
+	/**Represents the status of the equipment*/
 	public enum EquipmentStatus{
 		WORKING, LOST_OR_STOLEN, DEFICIENT, BROKEN;
 		

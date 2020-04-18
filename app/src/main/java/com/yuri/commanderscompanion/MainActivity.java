@@ -1,5 +1,7 @@
 package com.yuri.commanderscompanion;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 /**Represents the main starting activity of the app*/
@@ -12,6 +14,14 @@ public class MainActivity extends BaseActivity {
 
         setViews();
         configureViews();
+    }
+
+    /**Create an intent pointing to this activity
+     * @param context The context that requests the intent
+     * @return The intent to this activity
+     */
+    public static Intent makeIntent(Context context){
+        return new Intent(context, MainActivity.class);
     }
 
     @Override

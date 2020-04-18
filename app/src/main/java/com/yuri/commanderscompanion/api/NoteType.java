@@ -1,28 +1,29 @@
 package com.yuri.commanderscompanion.api;
 
 import dbAPI.Column;
-import dbAPI.ConstraintsEnum;
+import dbAPI.Constraint;
 import dbAPI.DatabaseCell;
 import dbAPI.DatabaseDataType;
 import dbAPI.DatabaseValue;
 import dbAPI.IColumn;
 import dbAPI.IRow;
 import dbAPI.Row;
+import dbAPI.SingularPrimaryKey;
 
 /**Represents a type or a category of notes*/
 public class NoteType extends Row {
 	/**The column of the note type id*/
 	public static final IColumn ID = new Column("id", 0, DatabaseDataType.INTEGER,
-			ConstraintsEnum.PRIMERY_KEY, ConstraintsEnum.AUTO_INCREMENT);
+			Constraint.BASIC_PRIMARY_KEY_CONSTRAINT/*, Constraint.AUTO_INCREMENT*/);
 	/**The column of the note type's owner id*/
 	public static final IColumn OWNER_ID = new Column("owner_id", 1, DatabaseDataType.INTEGER,
-			ConstraintsEnum.NOT_NULL);
+			Constraint.NOT_NULL);
 	/**The column of whether the owner is a soldier(true) or a unit(false)*/
 	public static final IColumn OF_SOLDIER = new Column("of_soldier", 2, DatabaseDataType.BOOLEAN,
-			ConstraintsEnum.NOT_NULL);
+			Constraint.NOT_NULL);
 	/**The column of the note type name)*/
 	public static final IColumn NAME = new Column("name", 3, DatabaseDataType.STRING,
-			ConstraintsEnum.NOT_NULL);
+			Constraint.NOT_NULL);
 
 	/**The id of the last note type*/
 	protected static int last_id = 0;
@@ -80,16 +81,16 @@ public class NoteType extends Row {
 	}
 	
 	public NoteType(IRow row) {
-		this(row.getCell(ID), row.getCell(OWNER_ID), row.getCell(OF_SOLDIER), row.getCell(NAME));
-		
-		id = row.getCell(ID).Value.getInteger();
+//		this(row.getCell(ID), row.getCell(OWNER_ID), row.getCell(OF_SOLDIER), row.getCell(NAME));
+		this(GeneralHelper.getCells(row, NoteTypes.COLUMNS));
+		id = row.getCell(ID).Value.getInt();
 		ofSoldier = row.getCell(OF_SOLDIER).Value.getBoolean();
 		if (ofSoldier && ownerS.isCommander) {
-			ownerS = Database.COMMANDERS.getByPrimeryKey(row.getCell(OWNER_ID).Value);
+			ownerS = Database.COMMANDERS.getRow(new SingularPrimaryKey(row.getCell(OWNER_ID)));
 		} else if (ofSoldier) {
-			ownerS = Database.SOLDIERS.getByPrimeryKey(row.getCell(OWNER_ID).Value);
+			ownerS = Database.SOLDIERS.getRow(new SingularPrimaryKey(row.getCell(OWNER_ID)));
 		} else {
-			ownerOU = Database.UNITS.getByPrimeryKey(row.getCell(OWNER_ID).Value);
+			ownerOU = Database.UNITS.getRow(new SingularPrimaryKey(row.getCell(OWNER_ID)));
 		}
 		name = row.getCell(NAME).Value.getString();
 	}
@@ -143,10 +144,33 @@ public class NoteType extends Row {
 	public static IColumn[] getStaticColumns() {
 		return new IColumn[] {ID, OWNER_ID, OF_SOLDIER, NAME};
 	}
-	
+
+	@Override
+	public boolean hasPrimaryKey() {
+		return true;
+	}
+
 	@Override
 	public IColumn[] getColumns() {
 		return getStaticColumns();
+	}
+
+	@Override
+	public NoteType clone() {
+		return new NoteType(this);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (!super.equals(obj)) { return false; }
+		NoteType noteType = (NoteType)obj;
+		if (noteType.ofSoldier != ofSoldier) { return false; }
+		if (ofSoldier){
+			if (noteType.ownerS.equals(ownerS)) { return false; }
+		} else {
+			if (noteType.ownerOU.equals(ownerOU)) { return false; }
+		}
+		return noteType.id == id && noteType.name == name;
 	}
 	
 	@Override

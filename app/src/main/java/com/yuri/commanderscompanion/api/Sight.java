@@ -1,7 +1,7 @@
 package com.yuri.commanderscompanion.api;
 
 import dbAPI.Column;
-import dbAPI.ConstraintsEnum;
+import dbAPI.Constraint;
 import dbAPI.DatabaseCell;
 import dbAPI.DatabaseDataType;
 import dbAPI.IColumn;
@@ -12,14 +12,14 @@ import dbAPI.Row;
 public class Sight extends Row {
 	/**The column of the serial of the sight*/
 	public static final IColumn SERIAL = new Column("serial", 0,
-DatabaseDataType.INTEGER, ConstraintsEnum.PRIMERY_KEY);
+			DatabaseDataType.INTEGER, Constraint.BASIC_PRIMARY_KEY_CONSTRAINT);
 	/**The column of the catalog id of the sight*/
-	public static final IColumn CATALOGID = new Column("catalogID", 1,
-DatabaseDataType.INTEGER, ConstraintsEnum.NOT_NULL);
+	public static final IColumn CATALOG_ID = new Column("catalogID", 1,
+			DatabaseDataType.INTEGER, Constraint.NOT_NULL);
 	/**The column of the type of the sight*/
 	public static final IColumn TYPE = new Column("type", 2,
-DatabaseDataType.STRING, ConstraintsEnum.NOT_NULL); 
-	
+			DatabaseDataType.STRING, Constraint.NOT_NULL);
+
 	/**The type of this sight*/
 	private String type;
 	/**The catalogID of this sight*/
@@ -33,11 +33,11 @@ DatabaseDataType.STRING, ConstraintsEnum.NOT_NULL);
 	 * @param serial The serial of the sight
 	 */
 	public Sight(String type, int catalogID, int serial) {
-		super(new DatabaseCell[] {
+		super(
 				new DatabaseCell(SERIAL, serial, DatabaseDataType.INTEGER),
-				new DatabaseCell(CATALOGID, catalogID, DatabaseDataType.INTEGER),
+				new DatabaseCell(CATALOG_ID, catalogID, DatabaseDataType.INTEGER),
 				new DatabaseCell(TYPE, type, DatabaseDataType.STRING)
-		});
+		);
 		this.type = type;
 		this.catalogID = catalogID;
 		this.serial = serial;
@@ -47,11 +47,10 @@ DatabaseDataType.STRING, ConstraintsEnum.NOT_NULL);
 	 * @param row The row of the sight
 	 */
 	public Sight(IRow row) {
-		super(new DatabaseCell[] {
-				row.getCell(SERIAL), row.getCell(CATALOGID), row.getCell(TYPE)
-		});
-		this.serial = row.getCell(SERIAL).Value.getInteger();
-		this.catalogID = row.getCell(CATALOGID).Value.getInteger();
+//		super(row.getCell(SERIAL), row.getCell(CATALOG_ID), row.getCell(TYPE));
+		super(GeneralHelper.getCells(row, Sights.COLUMNS));
+		this.serial = row.getCell(SERIAL).Value.getInt();
+		this.catalogID = row.getCell(CATALOG_ID).Value.getInt();
 		this.type = row.getCell(TYPE).Value.getString();
 	}
 	
@@ -59,7 +58,7 @@ DatabaseDataType.STRING, ConstraintsEnum.NOT_NULL);
 	 * @return The columns of the row
 	 */
 	public static IColumn[] getStaticColumns() {
-		return new IColumn[] {SERIAL, CATALOGID, TYPE};
+		return new IColumn[] {SERIAL, CATALOG_ID, TYPE};
 	}
 
 	/**Get this sight's type
@@ -82,7 +81,39 @@ DatabaseDataType.STRING, ConstraintsEnum.NOT_NULL);
 	public int getSerial() {
 		return serial;
 	}
-	
+
+	@Override
+	public boolean hasPrimaryKey() {
+		return true;
+	}
+
+	@Override
+	public IColumn[] getColumns() {
+		return getStaticColumns();
+	}
+
+	@Override
+	public Sight clone() {
+		//return new Sight(type, catalogID, serial);
+		return new Sight(this);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (!super.equals(obj)) { return false; }
+		return equals((Sight)obj);
+	}
+
+	/**Equals for {@link Sight}
+	 * @see Object#equals(Object)
+	 */
+	public boolean equals(Sight s){
+		if (this == s) { return true; }
+		if (s == null) { return false; }
+
+		return s.type == type && s.catalogID == catalogID && s.serial == serial;
+	}
+
 	@Override
 	public String toString() {
 		return "Type:\t" + type + "\n" +

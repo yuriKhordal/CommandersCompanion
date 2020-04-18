@@ -1,31 +1,30 @@
-/**
- * 
- */
 package com.yuri.commanderscompanion.api;
+
 import dbAPI.Column;
 import dbAPI.Constraint;
-import dbAPI.ConstraintsEnum;
 import dbAPI.DatabaseCell;
 import dbAPI.DatabaseDataType;
+import dbAPI.ForeignKeyConstraint;
 import dbAPI.IColumn;
 import dbAPI.IRow;
 import dbAPI.Row;
+import dbAPI.SingularPrimaryKey;
 
 /**Represents an entry in a log*/
 public class LogEntry extends Row {
 	/**The column of this entry's id*/
 	public static final IColumn ID = new Column("id", 0, DatabaseDataType.INTEGER,
-			ConstraintsEnum.PRIMERY_KEY, ConstraintsEnum.AUTO_INCREMENT);
+			Constraint.BASIC_PRIMARY_KEY_CONSTRAINT/*, Constraint.AUTO_INCREMENT*/);
 	/**The column of this entry's log id*/
 	public static final IColumn LOG_ID = new Column("log_id", 1, DatabaseDataType.INTEGER,
-			new Constraint(ConstraintsEnum.FOREIGN_KEY, null).setInfo(Logs.NAME),
-			new Constraint(ConstraintsEnum.NOT_NULL ,null));
+			new ForeignKeyConstraint("log_id", Logs.NAME + '(' + Log.ID.getName() + ')'),
+			Constraint.NOT_NULL);
 	/**The column of this entry's id*/
 	public static final IColumn SOLDIER_ID = new Column("soldier_id", 2, DatabaseDataType.INTEGER,
-			new Constraint(ConstraintsEnum.FOREIGN_KEY, null).setInfo(Soldiers.NAME),
-			new Constraint(ConstraintsEnum.NOT_NULL ,null));
+			new ForeignKeyConstraint("soldier_id", Soldiers.NAME + '(' + Soldier.ID.getName() + ')'),
+			Constraint.NOT_NULL);
 	/**The column of this entry's id*/
-	public static final IColumn TEXT = new Column("text", 3, DatabaseDataType.STRING, ConstraintsEnum.NOT_NULL);
+	public static final IColumn TEXT = new Column("text", 3, DatabaseDataType.STRING, Constraint.NOT_NULL);
 	
 	/**The id of the last row*/
 	protected static int last_id = 0;
@@ -67,14 +66,15 @@ public class LogEntry extends Row {
 	 * @param row The row
 	 */
 	public LogEntry(IRow row) {
-		this(row.getCell(ID), row.getCell(LOG_ID), row.getCell(SOLDIER_ID), row.getCell(TEXT));
-		this.id = row.getCell(ID).Value.getInteger();
+//		this(row.getCell(ID), row.getCell(LOG_ID), row.getCell(SOLDIER_ID), row.getCell(TEXT));
+		this(GeneralHelper.getCells(row, LogEntries.COLUMNS));
+		this.id = row.getCell(ID).Value.getInt();
 		if (id > last_id) {
 			last_id = id;
 		}
-		this.log = Database.LOGS.getByPrimeryKey(row.getCell(LOG_ID).Value);
+		this.log = Database.LOGS.getRow(new SingularPrimaryKey(row.getCell(LOG_ID)));
 		log.entries.add(this);
-		this.soldier = Database.SOLDIERS.getByPrimeryKey(row.getCell(SOLDIER_ID).Value);
+		this.soldier = Database.SOLDIERS.getRow(new SingularPrimaryKey(row.getCell(SOLDIER_ID)));
 		this.text = row.getCell(TEXT).Value.getString();
 	}
 	
@@ -119,10 +119,28 @@ public class LogEntry extends Row {
 	public static IColumn[] getStaticColumns() {
 		return new IColumn[] { ID, LOG_ID, SOLDIER_ID, TEXT };
 	}
-	
+
+	@Override
+	public boolean hasPrimaryKey() {
+		return true;
+	}
+
 	@Override
 	public IColumn[] getColumns() {
 		return getStaticColumns();
+	}
+
+	@Override
+	public LogEntry clone() {
+		return new LogEntry(this);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (!super.equals(obj)) { return false; }
+		LogEntry logEntry = (LogEntry)obj;
+		return logEntry.id == id && logEntry.log.equals(log) && logEntry.soldier.equals(soldier)
+				&& logEntry.text == text;
 	}
 	
 	@Override

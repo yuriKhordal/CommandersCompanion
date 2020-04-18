@@ -4,9 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import com.yuri.commanderscompanion.api.AppSettings;
 
@@ -25,8 +23,8 @@ public class SettingsActivity extends BaseActivity {
         setViews();
         configureViews();
 
-        //Set the shared prefences editor
-        editor = AppSettings.getAppSettings().getPreferences().edit();
+        //Open the shared preferences editor
+        editor = AppSettings.openEditor();
     }
 
     /**Create an intent pointing to this activity
@@ -51,9 +49,7 @@ public class SettingsActivity extends BaseActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        if (!editor.commit()){
-            Log.w(TAG, "editor couldn't commit settings. Settings were not saved!");
-            Toast.makeText(this, "Error: Settings could not be saved, try again!", Toast.LENGTH_LONG).show();
-        }
+        AppSettings.closeEditor(this);
+        editor = null;
     }
 }

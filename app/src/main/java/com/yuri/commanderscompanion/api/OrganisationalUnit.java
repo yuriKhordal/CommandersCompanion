@@ -5,9 +5,9 @@ import java.util.Stack;
 
 import dbAPI.Column;
 import dbAPI.Constraint;
-import dbAPI.ConstraintsEnum;
 import dbAPI.DatabaseCell;
 import dbAPI.DatabaseDataType;
+import dbAPI.ForeignKeyConstraint;
 import dbAPI.IColumn;
 import dbAPI.IRow;
 import dbAPI.Row;
@@ -16,16 +16,16 @@ import dbAPI.Row;
 public class OrganisationalUnit extends Row  {
 	/**The column of this unit's id*/
 	public static final IColumn ID = new Column("id", 0, DatabaseDataType.INTEGER,
-			ConstraintsEnum.PRIMERY_KEY, ConstraintsEnum.AUTO_INCREMENT);
+			Constraint.BASIC_PRIMARY_KEY_CONSTRAINT/*, Constraint.AUTO_INCREMENT*/);
 	/**The column of this unit's commander id*/
 	public static final IColumn COMMANDER_ID = new Column("commander_id", 1, DatabaseDataType.INTEGER,
-			new Constraint(ConstraintsEnum.FOREIGN_KEY, null).setInfo(Commanders.NAME));
+			new ForeignKeyConstraint("commander_id", Commanders.NAME + '(' + Commander.ID.getName() + ')'));
 	/**The column of this unit's type*/
 	public static final IColumn TYPE = new Column("type", 2, DatabaseDataType.STRING,
-			ConstraintsEnum.NOT_NULL);
+			Constraint.NOT_NULL);
 	/**The column of this unit's name*/
 	public static final IColumn NAME = new Column("name", 3, DatabaseDataType.STRING,
-			ConstraintsEnum.NOT_NULL);
+			Constraint.NOT_NULL);
 	
 	/**The last id of the unit*/
 	protected static int last_id = 0;
@@ -149,9 +149,10 @@ public class OrganisationalUnit extends Row  {
 	 * @param row The unit row
 	 */
 	public OrganisationalUnit(IRow row) {
-		this(row.getCell(ID), row.getCell(COMMANDER_ID), row.getCell(TYPE), row.getCell(NAME));
+//		this(row.getCell(ID), row.getCell(COMMANDER_ID), row.getCell(TYPE), row.getCell(NAME));
+		this(GeneralHelper.getCells(row, OrganisationalUnits.COLUMNS));
 		this.commander = null;
-		this.id = row.getCell(ID).Value.getInteger();
+		this.id = row.getCell(ID).Value.getInt();
 		this.name = row.getCell(NAME).Value.getString();
 		this.soldiers = new ArrayList<Soldier>();
 		this.subUnits = new ArrayList<OrganisationalUnit>();
@@ -191,12 +192,9 @@ public class OrganisationalUnit extends Row  {
 	 * @param recursive Whether to also count units in subunits
 	 * @return The number of sub-units in this unit
 	 */
-	public int getNumberofUnits(boolean recursive) {
-		if (!subUnits.isEmpty()) {
-			return 0;
-		}
+	public int getNumberOfUnits(boolean recursive) {
 		if (!recursive) {
-			return subUnits.size();
+			return !subUnits.isEmpty() ? subUnits.size() : 0;
 		}
 		int size = subUnits.size();
 		Stack<OrganisationalUnit> stack = new Stack<OrganisationalUnit>();
@@ -285,10 +283,34 @@ public class OrganisationalUnit extends Row  {
 	public Soldier getCommander() {
 		return this.commander;
 	}
-	
+
+	@Override
+	public boolean hasPrimaryKey() {
+		return true;
+	}
+
 	@Override
 	public IColumn[] getColumns() {
 		return getStaticColumns();
+	}
+
+	@Override
+	public OrganisationalUnit clone() {
+		if (hasSubUnits() && hasSoldiers()) {
+			return new OrganisationalUnit(type, name, (OrganisationalUnit[]) subUnits.toArray(), (Soldier[]) soldiers.toArray());
+		} else if (hasSoldiers()) {
+			return new OrganisationalUnit(type, name,(Soldier[]) soldiers.toArray());
+		} else {
+			return new OrganisationalUnit(type, name, (OrganisationalUnit[]) subUnits.toArray());
+		}
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (!super.equals(obj)) { return false; }
+		OrganisationalUnit unit = (OrganisationalUnit) obj;
+
+		return unit.id == id && unit.commander.equals(commander) && unit.type == type && unit.name == name;
 	}
 	
 	@Override

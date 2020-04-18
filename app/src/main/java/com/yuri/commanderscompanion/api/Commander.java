@@ -2,8 +2,8 @@ package com.yuri.commanderscompanion.api;
 
 import dbAPI.DatabaseCell;
 import dbAPI.DatabaseDataType;
-import dbAPI.DatabaseValue;
 import dbAPI.IRow;
+import dbAPI.SingularPrimaryKey;
 
 /**Represents a commander of a unit and a row*/
 public class Commander extends Soldier{
@@ -23,14 +23,24 @@ public class Commander extends Soldier{
 	 * @param row The commander row
 	 */
 	public Commander(IRow row) {
-		this(row.getCell(ID), row.getCell(UNIT_ID), row.getCell(IS_COMMANDER), row.getCell(NAME), row.getCell(RANK), row.getCell(WEAPON_SERIAL));
-		this.id = row.getCell(ID).Value.getInteger();
+//		this(row.getCell(ID), row.getCell(UNIT_ID), row.getCell(IS_COMMANDER), row.getCell(NAME),
+//				row.getCell(RANK), row.getCell(WEAPON_SERIAL));
+		this(GeneralHelper.getCells(row, Commanders.COLUMNS));
+//		this(
+//				row.getCell(ID).Value.getInt(),
+//				Database.UNITS.getRow(new SingularPrimaryKey(row.getCell(UNIT_ID))),
+//				row.getCell(NAME).Value.getString(),
+//				row.getCell(RANK).Value.getString(),
+//				Database.WEAPONS.getRow(new SingularPrimaryKey(row.getCell(WEAPON_SERIAL)))
+//		);
+		this.id = row.getCell(ID).Value.getInt();
 		this.name = row.getCell(NAME).Value.getString();
 		this.rank = row.getCell(RANK).Value.getString();
-		this.unit = Database.UNITS.getByPrimeryKey(row.getCell(UNIT_ID).Value);
+		this.unit = Database.UNITS.getRow(new SingularPrimaryKey(row.getCell(UNIT_ID)));
 		this.Unit = this.unit;
 		Unit.commander = this;
-		this.weapon = Database.WEAPONS.getByPrimeryKey(row.getCell(WEAPON_SERIAL).Value);
+		this.weapon = Database.WEAPONS.getRow(new SingularPrimaryKey(row.getCell(WEAPON_SERIAL)));
+		//pkey = new SingularPrimaryKey(ID, row.getCell(ID).Value);
 	}
 
 	/**Initialize a new commander with an id, unit, name, rank, and weapon
@@ -54,6 +64,11 @@ public class Commander extends Soldier{
 		this.unit = unit;
 		Unit = this.unit;
 		Unit.commander = this;
-		this.weapon = Database.WEAPONS.getByPrimeryKey(new DatabaseValue(weapon.getSerial(), DatabaseDataType.INTEGER));
+		this.weapon = Database.WEAPONS.getRow(new SingularPrimaryKey(weapon.getCell(Weapon.SERIAL)));
+	}
+
+	@Override
+	public Commander clone() {
+		return new Commander(this);
 	}
 }
