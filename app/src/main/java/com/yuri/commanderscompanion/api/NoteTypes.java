@@ -46,7 +46,7 @@ public class NoteTypes extends SinglePrimaryKeyCacheTable<NoteType> {
 
 		for (NoteType noteType : rows){
 			NoteType cloned = noteType.clone();
-			noteTypes.add(cloned);
+			noteTypes.addFromIRow(cloned);
 		}
 
 		return noteTypes;

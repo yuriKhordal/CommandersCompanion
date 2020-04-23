@@ -37,4 +37,18 @@ public class OrganisationalUnits extends SinglePrimaryKeyCacheTable<Organisation
 	public String getName() {
 		return NAME;
 	}
+
+	@Override
+	public OrganisationalUnits clone() {
+		OrganisationalUnits units = new OrganisationalUnits();
+		units.helper = helper.clone();
+		units.converter = converter;
+
+		for (OrganisationalUnit unit : rows){
+			OrganisationalUnit cloned = unit.clone();
+			units.addFromIRow(cloned);
+		}
+
+		return units;
+	}
 }

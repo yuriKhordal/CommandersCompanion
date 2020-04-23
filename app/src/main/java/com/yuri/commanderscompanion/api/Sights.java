@@ -1,7 +1,5 @@
 package com.yuri.commanderscompanion.api;
 
-import android.util.Log;
-
 import dbAPI.IColumn;
 import dbAPI.IDatabaseHelper;
 import dbAPI.IRow;
@@ -50,7 +48,7 @@ public class Sights extends SinglePrimaryKeyCacheTable<Sight> {
 
 		for (Sight sight : rows){
 			Sight cloned = sight.clone();
-			sights.add(cloned);
+			sights.addFromIRow(cloned);
 		}
 
 		return sights;

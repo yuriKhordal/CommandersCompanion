@@ -46,7 +46,7 @@ public class LogTypes extends SinglePrimaryKeyCacheTable<LogType> {
 
 		for (LogType logType : rows){
 			LogType cloned = logType.clone();
-			logTypes.add(cloned);
+			logTypes.addFromIRow(cloned);
 		}
 
 		return logTypes;

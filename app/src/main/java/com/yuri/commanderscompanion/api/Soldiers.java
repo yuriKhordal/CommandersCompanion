@@ -46,7 +46,7 @@ public class Soldiers extends SinglePrimaryKeyCacheTable<Soldier> {
 
 		for (Soldier soldier : rows){
 			Soldier cloned = soldier.clone();
-			soldiers.add(cloned);
+			soldiers.addFromIRow(cloned);
 		}
 
 		return soldiers;

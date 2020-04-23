@@ -46,7 +46,7 @@ public class Notices extends SinglePrimaryKeyCacheTable<Notice> {
 
 		for (Notice notice : rows){
 			Notice cloned = notice.clone();
-			notices.add(cloned);
+			notices.addFromIRow(cloned);
 		}
 
 		return notices;

@@ -1,6 +1,6 @@
 package com.yuri.commanderscompanion.api;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 
 import dbAPI.Column;
 import dbAPI.Constraint;
@@ -39,7 +39,7 @@ public class Notice extends Row {
 	/**The soldier that the notice was given to*/
 	protected Soldier soldier;
 	/**The date of this notice*/
-	protected LocalDateTime date;
+	protected Date date;
 	/**A summary of what the soldier did*/
 	protected String summary;
 	/**The punishment*/
@@ -52,7 +52,7 @@ public class Notice extends Row {
 		super(cells);
 	}
 	
-	public Notice(Soldier soldier, LocalDateTime date, String summary, String punishment) {
+	public Notice(Soldier soldier, Date date, String summary, String punishment) {
 		this(
 				new DatabaseCell(ID, null, DatabaseDataType.INTEGER),
 				new DatabaseCell(SOLDIER_ID, soldier.id, DatabaseDataType.INTEGER),
@@ -74,7 +74,7 @@ public class Notice extends Row {
 		this.id = row.getCell(ID).Value.getInt();
 		this.soldier = Database.SOLDIERS.getRow(new SingularPrimaryKey(row.getCell(SOLDIER_ID)));
 		this.soldier.notices.add(this);
-		this.date = row.getCell(DATE).Value.getDateTime();
+		this.date = (Date)row.getCell(DATE).Value.Value;
 		this.summary = row.getCell(SUMMARY).Value.getString();
 		this.punishment = row.getCell(PUNISHMENT).Value.getString();
 	}
@@ -82,14 +82,14 @@ public class Notice extends Row {
 	/**Get the date of this notice
 	 * @return The date of this notice
 	 */
-	public LocalDateTime getDate() {
+	public Date getDate() {
 		return date;
 	}
 
 	/**Set the date of this notice
 	 * @param date The date to set
 	 */
-	public void setDate(LocalDateTime date) {
+	public void setDate(Date date) {
 		this.date = date;
 		setValue(DATE, new DatabaseValue(date, DatabaseDataType.DATETIME));
 	}

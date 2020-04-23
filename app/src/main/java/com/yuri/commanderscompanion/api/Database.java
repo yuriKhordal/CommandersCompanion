@@ -12,12 +12,16 @@ public class Database extends AbstractDatabase {
 	public static String PATH;
 	/**The helper for the database*/
 	public static SQLiteDatabaseHelper HELPER;
+	/**The updates of te database*/
+	public static Updates UPDATES;
 	/**The sights table*/
 	public static Sights SIGHTS;
 	/**The weapons table*/
 	public static Weapons WEAPONS;
 	/**The units table*/
 	public static OrganisationalUnits UNITS;
+	/**The Unit parents*/
+	public static UnitParents UNIT_PARENTS;
 	/**The commanders table*/
 	public static Commanders COMMANDERS;
 	/**The soldiers table*/
@@ -48,10 +52,12 @@ public class Database extends AbstractDatabase {
     public static void init(String path){
 		PATH = path;
 		HELPER = new SQLiteDatabaseHelper(PATH);
+		UPDATES = new Updates(HELPER);
 
 		SIGHTS = new Sights(HELPER);
 		WEAPONS = new Weapons(HELPER);
 		UNITS = new OrganisationalUnits(HELPER);
+		UNIT_PARENTS = new UnitParents(HELPER);
 		COMMANDERS = new Commanders(HELPER);
 		SOLDIERS = new Soldiers(HELPER);
 		EQUIPMENT = new EquipmentTable(HELPER);
@@ -61,7 +67,7 @@ public class Database extends AbstractDatabase {
 		LOG_TYPES = new LogTypes(HELPER);
 		LOGS = new Logs(HELPER);
 		ENTRIES = new LogEntries(HELPER);
-		TABLES = new SinglePrimaryKeyCacheTable[]{SIGHTS, WEAPONS, UNITS, COMMANDERS, SOLDIERS, EQUIPMENT, NOTICES,
+		TABLES = new SinglePrimaryKeyCacheTable[]{SIGHTS, WEAPONS, UNITS, UNIT_PARENTS, COMMANDERS, SOLDIERS, EQUIPMENT, NOTICES,
 				NOTE_TYPES, NOTES, LOG_TYPES, LOGS, ENTRIES};
 
         db = new Database();
@@ -91,8 +97,10 @@ public class Database extends AbstractDatabase {
 				return WEAPONS;
 			case OrganisationalUnits.NAME:
 				return UNITS;
-			case Commanders.NAME:
-				return COMMANDERS;
+			case UnitParents.NAME:
+				return UNIT_PARENTS;
+			/*case Commanders.NAME:
+				return COMMANDERS;*/
 			case Soldiers.NAME:
 				return SOLDIERS;
 			case EquipmentTable.NAME:

@@ -7,7 +7,6 @@ import dbAPI.Column;
 import dbAPI.Constraint;
 import dbAPI.DatabaseCell;
 import dbAPI.DatabaseDataType;
-import dbAPI.ForeignKeyConstraint;
 import dbAPI.IColumn;
 import dbAPI.IRow;
 import dbAPI.Row;
@@ -18,8 +17,8 @@ public class OrganisationalUnit extends Row  {
 	public static final IColumn ID = new Column("id", 0, DatabaseDataType.INTEGER,
 			Constraint.BASIC_PRIMARY_KEY_CONSTRAINT/*, Constraint.AUTO_INCREMENT*/);
 	/**The column of this unit's commander id*/
-	public static final IColumn COMMANDER_ID = new Column("commander_id", 1, DatabaseDataType.INTEGER,
-			new ForeignKeyConstraint("commander_id", Commanders.NAME + '(' + Commander.ID.getName() + ')'));
+	public static final IColumn COMMANDER_ID = new Column("commander_id", 1, DatabaseDataType.INTEGER/*,
+			new ForeignKeyConstraint("commander_id", Commanders.NAME + '(' + Commander.ID.getName() + ')')*/);
 	/**The column of this unit's type*/
 	public static final IColumn TYPE = new Column("type", 2, DatabaseDataType.STRING,
 			Constraint.NOT_NULL);
@@ -55,6 +54,20 @@ public class OrganisationalUnit extends Row  {
 		super(cells);
 		logs = new ArrayList<Log>();
 		notes = new ArrayList<Note>();
+	}
+
+	public OrganisationalUnit(String type, String name){
+		this(
+				new DatabaseCell(ID, null, DatabaseDataType.INTEGER),
+				new DatabaseCell(COMMANDER_ID, null, DatabaseDataType.INTEGER),
+				new DatabaseCell(TYPE, type, DatabaseDataType.STRING),
+				new DatabaseCell(NAME, name, DatabaseDataType.STRING)
+		);
+		this.id = last_id++;
+		this.type = type;
+		this.name = name;
+		this.soldiers = new ArrayList<Soldier>(0);
+		this.subUnits = new ArrayList<OrganisationalUnit>(0);
 	}
 
 	/**Initialize a new unit with a type, a name, and soldiers
@@ -161,6 +174,10 @@ public class OrganisationalUnit extends Row  {
 	
 	public static IColumn[] getStaticColumns() {
 		return new IColumn[] {ID, COMMANDER_ID, TYPE, NAME};
+	}
+
+	public void addSubUnit(OrganisationalUnit unit){
+		Database.UNIT_PARENTS.add(this, unit);
 	}
 	
 	/**Get the number of soldiers in this unit

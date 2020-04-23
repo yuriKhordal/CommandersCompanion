@@ -46,7 +46,7 @@ public class LogEntries extends SinglePrimaryKeyCacheTable<LogEntry> {
 
 		for (LogEntry logEntry : rows){
 			LogEntry cloned = logEntry.clone();
-			logEntries.add(cloned);
+			logEntries.addFromIRow(cloned);
 		}
 
 		return logEntries;

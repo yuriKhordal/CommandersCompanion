@@ -46,7 +46,7 @@ public class Weapons extends SinglePrimaryKeyCacheTable<Weapon> {
 
 		for (Weapon weapon: rows){
 			Weapon copy = weapon.clone();
-			weapons.add(copy);
+			weapons.addFromIRow(copy);
 		}
 		return  weapons;
 	}

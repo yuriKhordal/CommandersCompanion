@@ -2,19 +2,12 @@ package com.yuri.commanderscompanion;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Window;
 import android.widget.ProgressBar;
 
 import com.yuri.commanderscompanion.api.Database;
-import com.yuri.commanderscompanion.api.Sight;
 
 import androidx.appcompat.app.AppCompatActivity;
-import dbAPI.Column;
-import dbAPI.Constraint;
-import dbAPI.DatabaseDataType;
-import dbAPI.DatabaseValue;
-import dbAPI.IColumn;
 import dbAPI.ITable;
 import dbAPI.SinglePrimaryKeyCacheTable;
 
@@ -43,6 +36,9 @@ public class LoadingScreen extends AppCompatActivity {
 
         if (!dbExists){
             for (ITable table : Database.TABLES){
+                if (table == Database.COMMANDERS){
+                    continue;
+                }
                 Database.HELPER.create(table);
                 int diff = loading_load_bar.getMax() / Database.TABLES.length;
                 loading_load_bar.incrementProgressBy(diff);
@@ -50,6 +46,9 @@ public class LoadingScreen extends AppCompatActivity {
             dbExists = true;
         } else {
             for (SinglePrimaryKeyCacheTable table : Database.TABLES){
+                if (table == Database.COMMANDERS){
+                    continue;
+                }
                 table.load();
                 int diff = loading_load_bar.getMax() / Database.TABLES.length;
                 loading_load_bar.incrementProgressBy(diff);

@@ -46,7 +46,7 @@ public class Notes extends SinglePrimaryKeyCacheTable<Note> {
 
 		for (Note note : rows){
 			Note cloned = note.clone();
-			notes.add(cloned);
+			notes.addFromIRow(cloned);
 		}
 
 		return notes;

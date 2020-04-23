@@ -122,6 +122,7 @@ public class Soldier extends Row{
 		this.isCommander = row.getCell(IS_COMMANDER).Value.getBoolean();
 		if (isCommander) {
 			this.unit.commander = this;
+			Database.COMMANDERS.addFromIRow(this);
 		} else {
 			this.unit.soldiers.add(this);
 		}

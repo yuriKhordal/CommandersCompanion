@@ -10,11 +10,11 @@ import dbAPI.SinglePrimaryKeyCacheTable;
 /**Represents a commanders table*/
 public class Commanders extends SinglePrimaryKeyCacheTable<Commander> {
 	/**The table's name*/
-	public static final String NAME = "Commanders";
+	public static final String NAME = Soldiers.NAME;
 	/**The primary key of the table*/
-	public static final PrimaryKeyConstraint PRIMARY_KEY_CONSTRAINT = new PrimaryKeyConstraint(Commander.ID);
+	public static final PrimaryKeyConstraint PRIMARY_KEY_CONSTRAINT = Soldiers.PRIMARY_KEY_CONSTRAINT;
 	/**The table's columns*/
-	public static final IColumn[] COLUMNS = Commander.getStaticColumns();
+	public static final IColumn[] COLUMNS = Soldiers.COLUMNS;
 
 	/**Initialize a new commanders table*/
 	protected Commanders() {
@@ -44,11 +44,16 @@ public class Commanders extends SinglePrimaryKeyCacheTable<Commander> {
 		commanders.helper = helper.clone();
 		commanders.converter = converter;
 
-		for (Commander commander : rows){
+		for (Commander commander : rows) {
 			Commander cloned = commander.clone();
-			commanders.add(cloned);
+			commanders.addFromIRow(cloned);
 		}
 
 		return commanders;
+	}
+
+	@Override
+	public void addFromIRow(IRow row) {
+		super.addFromIRow(row);
 	}
 }

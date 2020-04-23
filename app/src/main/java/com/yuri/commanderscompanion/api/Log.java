@@ -1,7 +1,7 @@
 package com.yuri.commanderscompanion.api;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 
 import dbAPI.Column;
 import dbAPI.Constraint;
@@ -23,11 +23,11 @@ public class Log extends Row {
 			new ForeignKeyConstraint("log_type_id", LogTypes.NAME + '(' + LogType.LOG_TYPE_ID.getName() + ')'),
 			Constraint.NOT_NULL);
 	/**The column of this log's unit id*/
-	public static final IColumn UNIT_ID = new Column("unit_id", 2, DatabaseDataType.INTEGER,
+	/*public static final IColumn UNIT_ID = new Column("unit_id", 2, DatabaseDataType.INTEGER,
 			new ForeignKeyConstraint("unit_id", OrganisationalUnits.NAME + '(' + OrganisationalUnit.ID.getName() + ')'),
-			Constraint.NOT_NULL);
+			Constraint.NOT_NULL);*/
 	/**The column of this log's id*/
-	public static final IColumn DATE = new Column("date", 3, DatabaseDataType.DATETIME,
+	public static final IColumn DATE = new Column("date", 2, DatabaseDataType.DATETIME,
 			Constraint.NOT_NULL);
 	
 	/**The last row's id*/
@@ -39,7 +39,7 @@ public class Log extends Row {
 	/**The unit that this log is attached to*/
 	protected OrganisationalUnit unit;
 	/**The date and time of this log*/
-	protected LocalDateTime time;
+	protected Date time;
 	/**This row's entries*/
 	public ArrayList<LogEntry> entries;
 	
@@ -51,21 +51,20 @@ public class Log extends Row {
 	
 	/**Initialize a new log with a type, unit, and time
 	 * @param type This log's type
-	 * @param unit This log's unit
 	 * @param time The time of this log
 	 */
-	public Log(final LogType type, OrganisationalUnit unit, final LocalDateTime time) {
+	public Log(final LogType type/*, OrganisationalUnit unit*/, final Date time) {
 		this(
 			new DatabaseCell(ID, null, DatabaseDataType.INTEGER),
 			new DatabaseCell(LOG_TYPE_ID, type.id, DatabaseDataType.INTEGER),
-			new DatabaseCell(UNIT_ID, unit.id, DatabaseDataType.INTEGER),
+			//new DatabaseCell(UNIT_ID, unit.id, DatabaseDataType.INTEGER),
 			new DatabaseCell(DATE, time, DatabaseDataType.DATETIME)
 		);
 		this.id = last_id++;
 		this.entries = new ArrayList<LogEntry>();
 		this.time = time;
 		this.type = type;
-		this.unit = unit;
+		this.unit = type.unit;
 		this.unit.logs.add(this);
 	}
 	
@@ -79,9 +78,10 @@ public class Log extends Row {
 		if (id > last_id) {
 			last_id = id;
 		}
-		this.time = row.getCell(DATE).Value.getDateTime();
+		this.time = (Date)row.getCell(DATE).Value.Value;
 		this.type = Database.LOG_TYPES.getRow(new SingularPrimaryKey(row.getCell(LOG_TYPE_ID)));
-		this.unit = Database.UNITS.getRow(new SingularPrimaryKey(row.getCell(UNIT_ID)));
+		//this.unit = Database.UNITS.getRow(new SingularPrimaryKey(row.getCell(UNIT_ID)));
+		this.unit = this.type.unit;
 		this.unit.logs.add(this);
 		this.entries = new ArrayList<LogEntry>();
 	}
@@ -90,7 +90,7 @@ public class Log extends Row {
 	 * @return The columns
 	 */
 	public static IColumn[] getStaticColumns() {
-		return new IColumn[] {ID, LOG_TYPE_ID, UNIT_ID, DATE};
+		return new IColumn[] {ID, LOG_TYPE_ID/*, UNIT_ID*/, DATE};
 	}
 	
 	/**Get this log's id
@@ -117,7 +117,7 @@ public class Log extends Row {
 	/**Get this log's time
 	 * @return the time
 	 */
-	public LocalDateTime getTime() {
+	public Date getTime() {
 		return time;
 	}
 
