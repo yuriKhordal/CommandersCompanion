@@ -26,7 +26,7 @@ public class Note extends Row {
 	public static final IColumn BODY = new Column("body", 3, DatabaseDataType.STRING);
 
 	/**The id of the last note*/
-	protected static int last_id = 0;
+	protected static int last_id = 1;
 	
 	/**The id of this note*/
 	protected int id;
@@ -68,15 +68,31 @@ public class Note extends Row {
 	public Note(IRow row) {
 //		this(row.getCell(ID), row.getCell(TYPE_ID), row.getCell(HEAD), row.getCell(BODY));
 		this(GeneralHelper.getCells(row, Notes.COLUMNS));
-		id = row.getCell(ID).Value.getInt();
+		DatabaseValue temp;
+		if ((temp = row.getCell(ID).Value).Value == null){
+			id = last_id++;
+		} else {
+			id = temp.getInt();
+			last_id = id > last_id ? id+1 : last_id;
+		}
 		type = Database.NOTE_TYPES.getRow(new SingularPrimaryKey(row.getCell(TYPE_ID)));
 		if (type.ofSoldier) {
 			type.ownerS.notes.add(this);
 		} else {
 			type.ownerOU.notes.add(this);
 		}
-		head = row.getCell(HEAD).Value.getString();
-		body = row.getCell(BODY).Value.getString();
+
+		if ((temp = row.getCell(HEAD).Value).Value == null){
+			head = "";
+		} else {
+			head = temp.getString();
+		}
+
+		if ((temp = row.getCell(BODY).Value).Value == null) {
+			body = "";
+		} else {
+			body = temp.getString();
+		}
 	}
 
 	/**Get the head of the message

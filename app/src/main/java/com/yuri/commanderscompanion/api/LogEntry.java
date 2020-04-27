@@ -4,6 +4,7 @@ import dbAPI.Column;
 import dbAPI.Constraint;
 import dbAPI.DatabaseCell;
 import dbAPI.DatabaseDataType;
+import dbAPI.DatabaseValue;
 import dbAPI.ForeignKeyConstraint;
 import dbAPI.IColumn;
 import dbAPI.IRow;
@@ -27,7 +28,7 @@ public class LogEntry extends Row {
 	public static final IColumn TEXT = new Column("text", 3, DatabaseDataType.STRING, Constraint.NOT_NULL);
 	
 	/**The id of the last row*/
-	protected static int last_id = 0;
+	protected static int last_id = 1;
 	/**This entry's id*/
 	protected int id;
 	/**The parent log of the entry*/
@@ -68,9 +69,14 @@ public class LogEntry extends Row {
 	public LogEntry(IRow row) {
 //		this(row.getCell(ID), row.getCell(LOG_ID), row.getCell(SOLDIER_ID), row.getCell(TEXT));
 		this(GeneralHelper.getCells(row, LogEntries.COLUMNS));
-		this.id = row.getCell(ID).Value.getInt();
-		if (id > last_id) {
-			last_id = id;
+		DatabaseValue temp;
+		if ((temp = row.getCell(ID).Value).Value == null){
+			this.id = last_id++;
+		} else {
+			this.id = temp.getInt();
+			if (id > last_id) {
+				last_id = id;
+			}
 		}
 		this.log = Database.LOGS.getRow(new SingularPrimaryKey(row.getCell(LOG_ID)));
 		log.entries.add(this);

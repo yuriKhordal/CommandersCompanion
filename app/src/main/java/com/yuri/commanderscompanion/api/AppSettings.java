@@ -11,6 +11,7 @@ public class AppSettings {
     public static final String TAG = AppSettings.class.getName();
     /**The name of the preferences file*/
     public static final String PREFERENCES_NAME = "settings";
+
     /**The name of the 'exists' setting*/
     protected static final String EXISTS_NAME = "exists";
     /**The default value of the 'exist' setting*/
@@ -19,6 +20,10 @@ public class AppSettings {
     public static final String APP_THEME_NAME = "appTheme";
     /**The default value of the 'appTheme' setting*/
     public static final Theme APP_THEME_DEFAULT_VALUE = Theme.Light;
+    /**The name of the 'startingPage' setting*/
+    public static final String STARTING_PAGE_NAME = "startingPage";
+    /**The default value of the 'startingPage' setting*/
+    public static final Page STARTING_PAGE_DEFAULT = Page.UnitsOverview;
 
     /**The preferences object with all the settings*/
     protected static SharedPreferences preferences;
@@ -29,6 +34,9 @@ public class AppSettings {
     public enum Theme{ Dark, Light}
     /**The current chosen theme*/
     protected static Theme appTheme;
+
+    public enum Page{ UnitsOverview }
+    protected static Page startingPage;
 
     // ---- AppSettings and SharedPreferences methods ----
 
@@ -42,6 +50,20 @@ public class AppSettings {
             setDefaultSettings(context);
             return;
         }
+
+        if (preferences.contains(APP_THEME_NAME)){
+            String str = preferences.getString(APP_THEME_NAME, "");
+            appTheme = Theme.valueOf(str);
+        } else {
+            setAppTheme(APP_THEME_DEFAULT_VALUE, context);
+        }
+
+        if (preferences.contains(STARTING_PAGE_NAME)){
+            startingPage = Page.valueOf(preferences.getString(STARTING_PAGE_NAME, ""));
+        } else {
+            setStartingPage(STARTING_PAGE_DEFAULT, context);
+        }
+
         String appThemeString = AppSettings.preferences.getString(APP_THEME_NAME, APP_THEME_DEFAULT_VALUE.name());
         appTheme = appThemeString == Theme.Light.name() ? Theme.Light : Theme.Dark;
     }
@@ -67,7 +89,7 @@ public class AppSettings {
     }
 
     /**Close the editor
-     * @param context optional, a context for making a text bubble
+     * @param context Optional, a context for making a text bubble
      */
     public static void closeEditor(Context context) {
         android.util.Log.v(TAG, "Closing editor");
@@ -87,6 +109,7 @@ public class AppSettings {
         openEditor();
         editor.putBoolean(EXISTS_NAME, true);
         editor.putString(APP_THEME_NAME, APP_THEME_DEFAULT_VALUE.name());
+        editor.putString(STARTING_PAGE_NAME, STARTING_PAGE_DEFAULT.name());
         closeEditor(context);
         appTheme = APP_THEME_DEFAULT_VALUE;
     }
@@ -97,6 +120,11 @@ public class AppSettings {
      */
     public static Theme getAppTheme(){ return appTheme; }
 
+    /**Get the app's starting page
+     * @return The starting page
+     */
+    public static Page getStartingPage(){ return startingPage; }
+
     /**Set this app's current theme
      * @param appTheme The new theme
      * @param context Optional, a context for making a text bubble
@@ -105,7 +133,7 @@ public class AppSettings {
         Log.v(TAG, "Setting appTheme to " + appTheme.name());
         AppSettings.appTheme = appTheme;
         SharedPreferences.Editor editor = preferences.edit();
-        editor.putString(appTheme.name(), Theme.Light.name());
+        editor.putString(APP_THEME_NAME, appTheme.name());
         if (commitEditor(editor, context)) {
             Log.v(TAG, "Finished setting appTheme to " + appTheme.name());
         }
@@ -114,6 +142,21 @@ public class AppSettings {
      * @param appTheme The new theme
      */
     public static void setAppTheme(Theme appTheme) { setAppTheme(appTheme, null); }
+
+    /**Set the app's starting page
+     * @param page The new starting page
+     * @param context Optional, a context for making a text bubble
+     */
+    public static void setStartingPage(Page page, Context context){
+        Log.v(TAG, "Setting startingPage to " + page.name());
+        AppSettings.startingPage = page;
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(startingPage.name(), Page.UnitsOverview.name());
+        if (commitEditor(editor, context)) {
+            Log.v(TAG, "Finished setting startingPage to " + startingPage.name());
+        }
+    }
+    public static void setStartingPage(Page page) { setStartingPage(page, null); }
 
     // ---- Internal methods ----
 

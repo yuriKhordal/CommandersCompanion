@@ -1,14 +1,12 @@
 package com.yuri.commanderscompanion.api;
 
 import dbAPI.IColumn;
-import dbAPI.IDatabaseHelper;
 import dbAPI.IRow;
 import dbAPI.IRowConverter;
 import dbAPI.PrimaryKeyConstraint;
-import dbAPI.SinglePrimaryKeyCacheTable;
 
 /**Represents a units table*/
-public class OrganisationalUnits extends SinglePrimaryKeyCacheTable<OrganisationalUnit> {
+public class OrganisationalUnits extends SQLiteTable<OrganisationalUnit> {
 	/**The name of this table*/
 	public static final String NAME = "OrganisationalUnits";
 	/**The primary key of the table*/
@@ -24,7 +22,7 @@ public class OrganisationalUnits extends SinglePrimaryKeyCacheTable<Organisation
 	/**Initialize a new units table with a helper
 	 * @param helper The helper for the database
 	 */
-	public OrganisationalUnits(IDatabaseHelper helper) {
+	public OrganisationalUnits(SQLiteDatabaseHelper helper) {
 		super(helper, OrganisationalUnits::convert, NAME, PRIMARY_KEY_CONSTRAINT, null ,null, GeneralHelper.getNonPrimaryColumns(COLUMNS));
 	}
 

@@ -24,21 +24,26 @@
     <autoscroll-from-editor value="true" />
     <show-object-properties value="true" />
     <loaded-nodes>
-      <connection connection-id="41917f41-7619-4b05-b924-cfb3a8fe3c13">
-        <schema name="main" object-types="table, view" />
+      <connection connection-id="5f8528db-86a2-4c79-a9a9-866b6f2c51c0">
+        <schema name="main" object-types="table, dataset trigger, column, view, constraint, index" />
       </connection>
     </loaded-nodes>
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
-    <connection id="41917f41-7619-4b05-b924-cfb3a8fe3c13">
-      <console name="Connection" type="STANDARD" schema="main" session="Main" />
+    <connection id="5f8528db-86a2-4c79-a9a9-866b6f2c51c0">
+      <console name="Connection" type="STANDARD" schema="main" session="Main"><![CDATA[SELECT * FROM "OrganisationalUnits"]]></console>
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
     <open-files />
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">
-    <connection id="41917f41-7619-4b05-b924-cfb3a8fe3c13" />
+    <connection id="5f8528db-86a2-4c79-a9a9-866b6f2c51c0" />
+  </component>
+  <component name="DBNavigator.Project.DatasetFilterManager">
+    <filter-actions connection-id="5f8528db-86a2-4c79-a9a9-866b6f2c51c0" dataset="main.OrganisationalUnits" active-filter-id="" />
+    <filter-actions connection-id="5f8528db-86a2-4c79-a9a9-866b6f2c51c0" dataset="main.UnitParents" active-filter-id="" />
+    <filter-actions connection-id="5f8528db-86a2-4c79-a9a9-866b6f2c51c0" dataset="main.Equipment" active-filter-id="" />
   </component>
   <component name="DBNavigator.Project.EditorStateManager">
     <last-used-providers />
@@ -63,7 +68,7 @@
   </component>
   <component name="DBNavigator.Project.Settings">
     <connections>
-      <connection id="41917f41-7619-4b05-b924-cfb3a8fe3c13" active="true">
+      <connection id="5f8528db-86a2-4c79-a9a9-866b6f2c51c0" active="true">
         <database>
           <name value="Connection" />
           <description value="" />
@@ -78,9 +83,7 @@
           <port value="1234" />
           <database value="database" />
           <files>
-            <file path="C:\Users\Yuri\Documents\AndroidStudio\DeviceExplorer\Nexus_5X_API_28 [emulator-5554]\data\user\0\com.yuri.commanderscompanion\files\soldiers.db" schema="main" />
-            <file path="C:\Users\Yuri\Documents\AndroidStudio\DeviceExplorer\Nexus_5X_API_28 [emulator-5554]\data\user\0\com.yuri.commanderscompanion\files\soldiers.db-shm" schema="shm" />
-            <file path="C:\Users\Yuri\Documents\AndroidStudio\DeviceExplorer\Nexus_5X_API_28 [emulator-5554]\data\user\0\com.yuri.commanderscompanion\files\soldiers.db-wal" schema="wal" />
+            <file path="C:\Users\Yuri\Documents\AndroidStudio\DeviceExplorer\Nexus_5X_API_28 [emulator-5554]\data\data\com.yuri.commanderscompanion\files\soldiers.db" schema="main" />
           </files>
           <type value="NONE" />
           <user value="" />

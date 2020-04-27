@@ -1,5 +1,6 @@
 package com.yuri.commanderscompanion.api;
 
+import java.text.ParseException;
 import java.util.Date;
 
 import dbAPI.Column;
@@ -23,7 +24,7 @@ public class Notice extends Row {
 			new ForeignKeyConstraint("soldier_id", Soldiers.NAME + '(' + Soldier.ID.getName() + ')'),
 			Constraint.NOT_NULL);
 	/**The column of the time of the notice*/
-	public static final IColumn DATE = new Column("date", 2, DatabaseDataType.DATETIME,
+	public static final IColumn DATE = new Column("date", 2, DatabaseDataType.STRING,
 			Constraint.NOT_NULL);
 	/**The column of the summary of the act*/
 	public static final IColumn SUMMARY = new Column("summary", 3, DatabaseDataType.STRING,
@@ -32,7 +33,7 @@ public class Notice extends Row {
 	public static final IColumn PUNISHMENT = new Column("punishment", 4, DatabaseDataType.STRING);
 	
 	/**The id of the last notice*/
-	protected static int last_id = 0;
+	protected static int last_id = 1;
 	
 	/**The id of this notice*/
 	protected int id;
@@ -56,7 +57,8 @@ public class Notice extends Row {
 		this(
 				new DatabaseCell(ID, null, DatabaseDataType.INTEGER),
 				new DatabaseCell(SOLDIER_ID, soldier.id, DatabaseDataType.INTEGER),
-				new DatabaseCell(DATE, date, DatabaseDataType.DATETIME),
+				new DatabaseCell(DATE, SQLiteDatabaseHelper.SIMPLE_DATE_FORMATTER.format(date),
+						DatabaseDataType.STRING),
 				new DatabaseCell(SUMMARY, summary, DatabaseDataType.STRING),
 				new DatabaseCell(PUNISHMENT, punishment, DatabaseDataType.STRING)
 		);
@@ -71,10 +73,20 @@ public class Notice extends Row {
 	public Notice(IRow row) {
 //		this(row.getCell(ID), row.getCell(SOLDIER_ID),row.getCell(DATE),row.getCell(SUMMARY),row.getCell(PUNISHMENT));
 		this(GeneralHelper.getCells(row, Notices.COLUMNS));
-		this.id = row.getCell(ID).Value.getInt();
+		DatabaseValue temp;
+		if ((temp = row.getCell(ID).Value).Value == null){
+			this.id = last_id++;
+		} else {
+			this.id = temp.getInt();
+			last_id = id > last_id ? id+1 : last_id;
+		}
 		this.soldier = Database.SOLDIERS.getRow(new SingularPrimaryKey(row.getCell(SOLDIER_ID)));
 		this.soldier.notices.add(this);
-		this.date = (Date)row.getCell(DATE).Value.Value;
+		try {
+			this.date = SQLiteDatabaseHelper.SIMPLE_DATE_FORMATTER.parse(row.getCell(DATE).Value.getString());
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
 		this.summary = row.getCell(SUMMARY).Value.getString();
 		this.punishment = row.getCell(PUNISHMENT).Value.getString();
 	}
@@ -91,7 +103,8 @@ public class Notice extends Row {
 	 */
 	public void setDate(Date date) {
 		this.date = date;
-		setValue(DATE, new DatabaseValue(date, DatabaseDataType.DATETIME));
+		setValue(DATE, new DatabaseValue(SQLiteDatabaseHelper.SIMPLE_DATE_FORMATTER.format(date),
+				DatabaseDataType.STRING));
 	}
 
 	/**Get the summary of what happened

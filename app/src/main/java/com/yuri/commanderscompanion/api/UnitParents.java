@@ -9,11 +9,10 @@ import dbAPI.IRow;
 import dbAPI.IRowConverter;
 import dbAPI.PrimaryKeyConstraint;
 import dbAPI.Row;
-import dbAPI.SinglePrimaryKeyCacheTable;
 import dbAPI.SingularPrimaryKey;
 
 /**Represents a unit parents table*/
-public class UnitParents extends SinglePrimaryKeyCacheTable<IRow> {
+public class UnitParents extends SQLiteTable<IRow> {
     /**The name of this table*/
     public static final String NAME = "UnitParents";
     /**The primary key id column*/
@@ -22,10 +21,10 @@ public class UnitParents extends SinglePrimaryKeyCacheTable<IRow> {
     /**The unit id*/
     public static final Column UNIT_ID = new Column("unit_id", 1, DatabaseDataType.INTEGER,
             new ForeignKeyConstraint("unit_id", OrganisationalUnits.NAME +
-                    '(' + OrganisationalUnit.ID + ')'), Constraint.NOT_NULL, Constraint.UNIQUE);
+                    '(' + OrganisationalUnit.ID.getName() + ')'), Constraint.NOT_NULL, Constraint.UNIQUE);
     public static final Column PARENT_ID = new Column("parent_id", 2, DatabaseDataType.INTEGER,
             new ForeignKeyConstraint("parent_id", OrganisationalUnits.NAME +
-                    '(' + OrganisationalUnit.ID + ')'), Constraint.NOT_NULL);
+                    '(' + OrganisationalUnit.ID.getName() + ')'), Constraint.NOT_NULL);
     /**The primary key of the table*/
     public static final PrimaryKeyConstraint PRIMARY_KEY_CONSTRAINT = new PrimaryKeyConstraint(UNIT_PARENT_ID);
     /**All the columns in the table*/
@@ -37,7 +36,7 @@ public class UnitParents extends SinglePrimaryKeyCacheTable<IRow> {
 
     public UnitParents(SQLiteDatabaseHelper helper){
         super(helper, UnitParents::convert, NAME, PRIMARY_KEY_CONSTRAINT, null,
-                null, COLUMNS);
+                null, GeneralHelper.getNonPrimaryColumns(COLUMNS));
     }
 
     /**@see IRowConverter#convertFromIRow(IRow) */

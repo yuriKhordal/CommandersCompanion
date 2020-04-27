@@ -19,14 +19,14 @@ public class NoteType extends Row {
 	public static final IColumn OWNER_ID = new Column("owner_id", 1, DatabaseDataType.INTEGER,
 			Constraint.NOT_NULL);
 	/**The column of whether the owner is a soldier(true) or a unit(false)*/
-	public static final IColumn OF_SOLDIER = new Column("of_soldier", 2, DatabaseDataType.BOOLEAN,
+	public static final IColumn OF_SOLDIER = new Column("of_soldier", 2, DatabaseDataType.INTEGER,
 			Constraint.NOT_NULL);
 	/**The column of the note type name)*/
 	public static final IColumn NAME = new Column("name", 3, DatabaseDataType.STRING,
 			Constraint.NOT_NULL);
 
 	/**The id of the last note type*/
-	protected static int last_id = 0;
+	protected static int last_id = 1;
 	
 	/**The id of the note*/
 	protected int id;
@@ -52,7 +52,7 @@ public class NoteType extends Row {
 		this(
 				new DatabaseCell(ID, null, DatabaseDataType.INTEGER),
 				new DatabaseCell(OWNER_ID, owner.id, DatabaseDataType.INTEGER),
-				new DatabaseCell(OF_SOLDIER, true, DatabaseDataType.BOOLEAN),
+				new DatabaseCell(OF_SOLDIER, "1", DatabaseDataType.INTEGER),
 				new DatabaseCell(NAME, name, DatabaseDataType.STRING)
 		);
 		id = last_id++;
@@ -70,7 +70,7 @@ public class NoteType extends Row {
 		this(
 				new DatabaseCell(ID, null, DatabaseDataType.INTEGER),
 				new DatabaseCell(OWNER_ID, owner.id, DatabaseDataType.INTEGER),
-				new DatabaseCell(OF_SOLDIER, false, DatabaseDataType.BOOLEAN),
+				new DatabaseCell(OF_SOLDIER, "0", DatabaseDataType.INTEGER),
 				new DatabaseCell(NAME, name, DatabaseDataType.STRING)
 		);
 		id = last_id++;
@@ -83,11 +83,17 @@ public class NoteType extends Row {
 	public NoteType(IRow row) {
 //		this(row.getCell(ID), row.getCell(OWNER_ID), row.getCell(OF_SOLDIER), row.getCell(NAME));
 		this(GeneralHelper.getCells(row, NoteTypes.COLUMNS));
-		id = row.getCell(ID).Value.getInt();
-		ofSoldier = row.getCell(OF_SOLDIER).Value.getBoolean();
-		if (ofSoldier && ownerS.isCommander) {
+		DatabaseValue temp;
+		if ((temp = row.getCell(ID).Value).Value == null){
+			id = last_id++;
+		} else {
+			id = temp.getInt();
+			last_id = id > last_id ? id+1 : last_id;
+		}
+		ofSoldier = row.getCell(OF_SOLDIER).Value.getInt() == 1;
+		/*if (ofSoldier && ownerS.isCommander) {
 			ownerS = Database.COMMANDERS.getRow(new SingularPrimaryKey(row.getCell(OWNER_ID)));
-		} else if (ofSoldier) {
+		} else */if (ofSoldier) {
 			ownerS = Database.SOLDIERS.getRow(new SingularPrimaryKey(row.getCell(OWNER_ID)));
 		} else {
 			ownerOU = Database.UNITS.getRow(new SingularPrimaryKey(row.getCell(OWNER_ID)));

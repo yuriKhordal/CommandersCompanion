@@ -4,6 +4,7 @@ import dbAPI.Column;
 import dbAPI.Constraint;
 import dbAPI.DatabaseCell;
 import dbAPI.DatabaseDataType;
+import dbAPI.DatabaseValue;
 import dbAPI.ForeignKeyConstraint;
 import dbAPI.IColumn;
 import dbAPI.IRow;
@@ -67,10 +68,15 @@ public class Weapon extends Row{
 	public Weapon(IRow row) {
 //		super(row.getCell(SERIAL), row.getCell(SIGHT_SERIAL), row.getCell(TYPE));
 		super(GeneralHelper.getCells(row, Weapons.COLUMNS));
+		DatabaseValue temp;
 		
 		this.type = row.getCell(TYPE).Value.getString();
 		this.serial = row.getCell(SERIAL).Value.getInt();
-		this.sight = Database.SIGHTS.getRow(new SingularPrimaryKey(row.getCell(SIGHT_SERIAL)));
+		if ((temp = row.getCell(SIGHT_SERIAL).Value).Value == null){
+			sight = null;
+		} else {
+			this.sight = Database.SIGHTS.getRow(new SingularPrimaryKey(SIGHT_SERIAL, temp));
+		}
 	}
 
 	/**Get all the columns in the table

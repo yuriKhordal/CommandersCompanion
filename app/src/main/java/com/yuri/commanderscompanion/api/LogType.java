@@ -24,11 +24,11 @@ public class LogType extends Row {
 	public static final IColumn NAME = new Column("name", 2, DatabaseDataType.STRING,
 			Constraint.NOT_NULL);
 	/**The column that determines whether to also include soldiers in subunits*/
-	public static final IColumn RECURSIVE = new Column("recursive", 3, DatabaseDataType.BOOLEAN,
+	public static final IColumn RECURSIVE = new Column("recursive", 3, DatabaseDataType.INTEGER,
 			Constraint.NOT_NULL);
 	
 	/**The id of the last row*/
-	protected static int last_id = 0;
+	protected static int last_id = 1;
 	
 	/**The id of this log type*/
 	protected int id;
@@ -47,7 +47,7 @@ public class LogType extends Row {
 			new DatabaseCell(LOG_TYPE_ID, null, DatabaseDataType.INTEGER),
 			new DatabaseCell(UNIT_ID, unit.id, DatabaseDataType.INTEGER),
 			new DatabaseCell(NAME, name, DatabaseDataType.STRING),
-			new DatabaseCell(RECURSIVE, recursive, DatabaseDataType.BOOLEAN)
+			new DatabaseCell(RECURSIVE, recursive ? 1 : 0, DatabaseDataType.INTEGER)
 		);
 		this.id = last_id++;
 		this.name = name;
@@ -61,12 +61,17 @@ public class LogType extends Row {
 	public LogType(IRow row) {
 //		this(row.getCell(LOG_TYPE_ID), row.getCell(UNIT_ID), row.getCell(NAME), row.getCell(RECURSIVE));
 		this(GeneralHelper.getCells(row, LogTypes.COLUMNS));
-		this.id = row.getCell(LOG_TYPE_ID).Value.getInt();
-		if (id > last_id) {
-			last_id = id;
+		DatabaseValue temp;
+		if  ((temp = row.getCell(LOG_TYPE_ID).Value).Value == null){
+			this.id = last_id++;
+		} else {
+			this.id = temp.getInt();
+			if (id > last_id) {
+				last_id = id;
+			}
 		}
 		this.name = row.getCell(NAME).Value.getString();
-		this.recursive = row.getCell(RECURSIVE).Value.getBoolean();
+		this.recursive = row.getCell(RECURSIVE).Value.getInt() == 1;
 		this.unit = Database.UNITS.getRow(new SingularPrimaryKey(row.getCell(UNIT_ID)));
 	}
 	
@@ -97,7 +102,7 @@ public class LogType extends Row {
 	 */
 	public void setRecursive(boolean recursive) {
 		this.recursive = recursive;
-		setValue(RECURSIVE, new DatabaseValue(recursive, DatabaseDataType.BOOLEAN));
+		setValue(RECURSIVE, new DatabaseValue(recursive ? 1 : 0, DatabaseDataType.INTEGER));
 	}
 
 	/**Get this log's id

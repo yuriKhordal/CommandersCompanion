@@ -1,14 +1,12 @@
 package com.yuri.commanderscompanion.api;
 
 import dbAPI.IColumn;
-import dbAPI.IDatabaseHelper;
 import dbAPI.IRow;
 import dbAPI.IRowConverter;
 import dbAPI.PrimaryKeyConstraint;
-import dbAPI.SinglePrimaryKeyCacheTable;
 
 /**Represents equipment table*/
-public class EquipmentTable extends SinglePrimaryKeyCacheTable<Equipment> {
+public class EquipmentTable extends SQLiteTable<Equipment> {
 	/**The name of the table in the database*/
 	public static final String NAME = "Equipment";
 	/**The primary key of the table*/
@@ -24,7 +22,7 @@ public class EquipmentTable extends SinglePrimaryKeyCacheTable<Equipment> {
 	/**Initialize a new equipment table with a helper
 	 * @param helper The helper for the database
 	 */
-	public EquipmentTable(IDatabaseHelper helper) {
+	public EquipmentTable(SQLiteDatabaseHelper helper) {
 		super(helper, EquipmentTable::convert, NAME, PRIMARY_KEY_CONSTRAINT, null, null, GeneralHelper.getNonPrimaryColumns(COLUMNS));
 	}
 

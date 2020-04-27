@@ -1,14 +1,12 @@
 package com.yuri.commanderscompanion.api;
 
 import dbAPI.IColumn;
-import dbAPI.IDatabaseHelper;
 import dbAPI.IRow;
 import dbAPI.IRowConverter;
 import dbAPI.PrimaryKeyConstraint;
-import dbAPI.SinglePrimaryKeyCacheTable;
 
 /**Represents a sights Table*/
-public class Sights extends SinglePrimaryKeyCacheTable<Sight> {
+public class Sights extends SQLiteTable<Sight> {
 	/**The name of the table in the database*/
 	public static final String NAME = "Sights";
 	/**The primary key of the table*/
@@ -26,7 +24,7 @@ public class Sights extends SinglePrimaryKeyCacheTable<Sight> {
 	/**Initialize a new sights table with a helper
 	 * @param helper The helper for the database
 	 */
-	public Sights(IDatabaseHelper helper) {
+	public Sights(SQLiteDatabaseHelper helper) {
 		super(helper, Sights::convert, NAME, PRIMARY_KEY_CONSTRAINT, null, null, GeneralHelper.getNonPrimaryColumns(COLUMNS));
 	}
 

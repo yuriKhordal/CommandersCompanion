@@ -67,6 +67,7 @@ public final class GeneralHelper {
         return cells;
     }
 
+    /**Insert data into database to test all tables*/
     public static void testDataInsert(){
         Sight s1,s2,s3,s4,s5,s6,s7,s8,s9,s10;
         Weapon w1, w2, w3, w4, w5, w6, w7, w8, w9, w10;
@@ -147,7 +148,7 @@ public final class GeneralHelper {
             Database.NOTES.insert(n7 = new Note(nt3, "Sunday", "body"));
             Database.NOTES.insert(n8 = new Note(nt3, "Monday", "body"));
             Database.NOTES.insert(n9 = new Note(nt3, "Tuesday", "body"));
-            Database.NOTES.insert(n10 = new Note(nt3, "Wednsday", "body"));
+            Database.NOTES.insert(n10 = new Note(nt3, "Wednesday", "body"));
         } {
             Database.LOG_TYPES.insert(lt1 = new LogType(u3, "Log 1", true));
             Database.LOG_TYPES.insert(lt2 = new LogType(u3, "Closed", false));

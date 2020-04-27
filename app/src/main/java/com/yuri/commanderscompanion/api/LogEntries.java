@@ -1,14 +1,12 @@
 package com.yuri.commanderscompanion.api;
 
 import dbAPI.IColumn;
-import dbAPI.IDatabaseHelper;
 import dbAPI.IRow;
 import dbAPI.IRowConverter;
 import dbAPI.PrimaryKeyConstraint;
-import dbAPI.SinglePrimaryKeyCacheTable;
 
 /**Representing a table of entries*/
-public class LogEntries extends SinglePrimaryKeyCacheTable<LogEntry> {
+public class LogEntries extends SQLiteTable<LogEntry> {
 	/**The name of the table*/
 	public static final String NAME = "LogEntries";
 	/**The primary key of the table*/
@@ -24,7 +22,7 @@ public class LogEntries extends SinglePrimaryKeyCacheTable<LogEntry> {
 	/**Initialize a new log entries table with a helper
 	 * @param helper The helper for the database
 	 */
-	public LogEntries(IDatabaseHelper helper) {
+	public LogEntries(SQLiteDatabaseHelper helper) {
 		super(helper, LogEntries::convert, NAME, PRIMARY_KEY_CONSTRAINT, null, null, GeneralHelper.getNonPrimaryColumns(COLUMNS));
 	}
 

@@ -23,7 +23,7 @@ public class Soldier extends Row{
 			new ForeignKeyConstraint("unit_id", OrganisationalUnits.NAME + '(' + OrganisationalUnit.ID.getName() + ')'),
 			Constraint.NOT_NULL);
 	/**The column that tells whether it is a commander or not*/
-	public static final Column IS_COMMANDER = new Column("is_commander", 2, DatabaseDataType.BOOLEAN,
+	public static final Column IS_COMMANDER = new Column("is_commander", 2, DatabaseDataType.INTEGER,
 			Constraint.NOT_NULL);
 	/**The column of the soldier's name*/
 	public static final Column NAME = new Column("name", 3, DatabaseDataType.STRING,
@@ -76,7 +76,7 @@ public class Soldier extends Row{
 		this(
 			new DatabaseCell(ID, id, DatabaseDataType.INTEGER),
 			new DatabaseCell(UNIT_ID, unit.id, DatabaseDataType.INTEGER),
-			new DatabaseCell(IS_COMMANDER, false, DatabaseDataType.BOOLEAN),
+			new DatabaseCell(IS_COMMANDER, 0, DatabaseDataType.INTEGER),
 			new DatabaseCell(NAME, name, DatabaseDataType.STRING),
 			new DatabaseCell(RANK, rank, DatabaseDataType.STRING),
 			new DatabaseCell(WEAPON_SERIAL, null, DatabaseDataType.INTEGER)
@@ -98,7 +98,7 @@ public class Soldier extends Row{
 		this(
 			new DatabaseCell(ID, id, DatabaseDataType.INTEGER),
 			new DatabaseCell(UNIT_ID, unit.id, DatabaseDataType.INTEGER),
-			new DatabaseCell(IS_COMMANDER, false, DatabaseDataType.BOOLEAN),
+			new DatabaseCell(IS_COMMANDER, 0, DatabaseDataType.INTEGER),
 			new DatabaseCell(NAME, name, DatabaseDataType.STRING),
 			new DatabaseCell(RANK, rank, DatabaseDataType.STRING),
 			new DatabaseCell(WEAPON_SERIAL, weapon.getSerial(), DatabaseDataType.INTEGER)
@@ -117,9 +117,10 @@ public class Soldier extends Row{
 //		this(row.getCell(ID), row.getCell(UNIT_ID), row.getCell(IS_COMMANDER), row.getCell(NAME),
 //				row.getCell(RANK), row.getCell(WEAPON_SERIAL));
 		this(GeneralHelper.getCells(row, Soldiers.COLUMNS));
+		DatabaseValue temp;
 		this.id = row.getCell(ID).Value.getInt();
 		this.unit = Database.UNITS.getRow(new SingularPrimaryKey(row.getCell(UNIT_ID)));
-		this.isCommander = row.getCell(IS_COMMANDER).Value.getBoolean();
+		this.isCommander = row.getCell(IS_COMMANDER).Value.getInt() == 1;
 		if (isCommander) {
 			this.unit.commander = this;
 			Database.COMMANDERS.addFromIRow(this);
@@ -127,8 +128,17 @@ public class Soldier extends Row{
 			this.unit.soldiers.add(this);
 		}
 		this.name = row.getCell(NAME).Value.getString();
-		this.rank = row.getCell(RANK).Value.getString();
-		this.weapon = Database.WEAPONS.getRow(new SingularPrimaryKey(row.getCell(WEAPON_SERIAL)));
+		if ((temp = row.getCell(RANK).Value).Value == null){
+			rank = "";
+		} else {
+			this.rank = temp.getString();
+		}
+
+		if ((temp = row.getCell(WEAPON_SERIAL).Value).Value == null){
+			weapon = null;
+		} else {
+			this.weapon = Database.WEAPONS.getRow(new SingularPrimaryKey(WEAPON_SERIAL, temp));
+		}
 	}
 	
 	/**Get all the columns in the row

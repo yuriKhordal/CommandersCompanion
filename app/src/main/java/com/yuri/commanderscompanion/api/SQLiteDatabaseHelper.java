@@ -3,10 +3,11 @@ package com.yuri.commanderscompanion.api;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import com.yuri.commanderscompanion.BuildConfig;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import dbAPI.CheckConstraint;
 import dbAPI.Constraint;
@@ -29,6 +30,8 @@ public class SQLiteDatabaseHelper implements IDatabaseHelper { //TODO: create ro
     /**The path to the database*/
     protected String path;
 
+    protected IRow last_inserted_row;
+
     /**Initialize a new sql database helper with a path
      * @param path The path to the database file
      */
@@ -36,6 +39,18 @@ public class SQLiteDatabaseHelper implements IDatabaseHelper { //TODO: create ro
         Log.v(TAG, "Initialized a new SQLDatabaseHelper with path: '" + path + '\'');
         this.path = path;
         db = SQLiteDatabase.openOrCreateDatabase(path, null);
+        last_inserted_row = null;
+
+        if (BuildConfig.DEBUG){
+            db.disableWriteAheadLogging();
+        }
+    }
+
+    /**Get the last row that was inserted
+     * @return The last inserted row
+     */
+    public IRow getLastInsertedRow(){
+        return this.last_inserted_row;
     }
 
     @Override
@@ -122,7 +137,7 @@ public class SQLiteDatabaseHelper implements IDatabaseHelper { //TODO: create ro
     public void insert(final ITable table, final IColumn[] columns, final DatabaseValue[] values) {
         Log.v(TAG, "Inserting into table " + table.getName());
         if (columns.length != values.length){
-            IllegalArgumentException exception =
+                    IllegalArgumentException exception =
                     new IllegalArgumentException("The arrays 'columns' and 'values' are different lengths!");
             Log.wtf(TAG, "The arrays 'columns' and 'values' are different lengths!", exception);
             throw exception;
@@ -142,6 +157,10 @@ public class SQLiteDatabaseHelper implements IDatabaseHelper { //TODO: create ro
         Log.d(TAG, "insert SQL string: {\n" + sql + "\n}");
         db.execSQL(sql);
         Log.v(TAG, "Finished inserting into " + table.getName());
+
+        last_inserted_row = new SQLiteDataReader(db.rawQuery(
+                "SELECT * FROM " + table.getName() + " WHERE rowid=last_insert_rowid()",
+                null)).next();
     }
 
     @Override
@@ -382,6 +401,9 @@ public class SQLiteDatabaseHelper implements IDatabaseHelper { //TODO: create ro
 
     @Override
     public String DatabaseValueToString(DatabaseValue value) {
+        if (value.Value == null){
+            return "NULL";
+        }
         switch (value.getType()){
             //case BOOLEAN: value.getBoolean().toString(); break;
             case BYTEARRAY:
@@ -396,11 +418,12 @@ public class SQLiteDatabaseHelper implements IDatabaseHelper { //TODO: create ro
                 return new String(hexString);
             case DATETIME:
                 Date date = (Date)value.Value;
-                return SIMPLE_DATE_FORMATTER.format(date);
+                return "'" + SIMPLE_DATE_FORMATTER.format(date) + "'";
             /*case DOUBLE: value.getDouble().toString(); break;
             case INTEGER: value.getInteger().toString(); break;*/
             case STRING: return "'" + value.getString() + "'";
-            default: return value.toString();
+            case BOOLEAN: return value.getBoolean() ? "1" : "0";
+            default: return value.Value.toString();
         }
     }
 

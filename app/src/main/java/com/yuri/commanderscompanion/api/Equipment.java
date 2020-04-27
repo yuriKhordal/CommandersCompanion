@@ -29,7 +29,7 @@ public class Equipment extends Row {
 			Constraint.NOT_NULL);
 	
 	/**Software auto incrementation*/
-	protected static int last_id = 0;
+	protected static int last_id = 1;
 	
 	/**Equipment-Soldier id*/
 	protected int soldier_equipment_id;
@@ -88,14 +88,22 @@ public class Equipment extends Row {
 //		super(row.getCell(SOLDIER_EQUIPMENT_ID), row.getCell(SOLDIER_ID), row.getCell(SERIAL),
 //				row.getCell(NAME), row.getCell(STATUS));
 		super(GeneralHelper.getCells(row, EquipmentTable.COLUMNS));
-		this.soldier_equipment_id = row.getCell(SOLDIER_EQUIPMENT_ID).Value.getInt();
-		last_id = soldier_equipment_id > last_id ? soldier_equipment_id+1 : last_id;
+		DatabaseValue temp;
+		if ((temp = row.getCell(SOLDIER_EQUIPMENT_ID).Value).Value == null) {
+			this.soldier_equipment_id = last_id++;
+		} else {
+			this.soldier_equipment_id = temp.getInt();
+			last_id = soldier_equipment_id > last_id ? soldier_equipment_id+1 : last_id;
+		}
 		this.owner = Database.SOLDIERS.getRow(new SingularPrimaryKey(row.getCell(SOLDIER_ID)));
 		this.owner.equipment.add(this);
-		this.serial = row.getCell(SERIAL).Value.getInt();
+		if ((temp = row.getCell(SERIAL).Value).Value == null){
+			this.serial = null;
+		} else {
+			this.serial = temp.getInt();
+		}
 		this.name = row.getCell(NAME).Value.getString();
 		this.status = EquipmentStatus.fromString(row.getCell(STATUS).Value.getString());
-		//pkey = new SingularPrimaryKey(row.getCell(SOLDIER_EQUIPMENT_ID));
 	}
 	
 	/**Get all the columns of the row

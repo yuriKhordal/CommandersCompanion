@@ -7,6 +7,7 @@ import dbAPI.Column;
 import dbAPI.Constraint;
 import dbAPI.DatabaseCell;
 import dbAPI.DatabaseDataType;
+import dbAPI.DatabaseValue;
 import dbAPI.IColumn;
 import dbAPI.IRow;
 import dbAPI.Row;
@@ -25,10 +26,10 @@ public class OrganisationalUnit extends Row  {
 	/**The column of this unit's name*/
 	public static final IColumn NAME = new Column("name", 3, DatabaseDataType.STRING,
 			Constraint.NOT_NULL);
-	
+
 	/**The last id of the unit*/
-	protected static int last_id = 0;
-	
+	protected static int last_id = 1;
+
 	/**The id of this unit*/
 	protected int id;
 	/**The commander of this unit*/
@@ -164,8 +165,13 @@ public class OrganisationalUnit extends Row  {
 	public OrganisationalUnit(IRow row) {
 //		this(row.getCell(ID), row.getCell(COMMANDER_ID), row.getCell(TYPE), row.getCell(NAME));
 		this(GeneralHelper.getCells(row, OrganisationalUnits.COLUMNS));
+		DatabaseValue temp;
 		this.commander = null;
-		this.id = row.getCell(ID).Value.getInt();
+		if ((temp = row.getCell(ID).Value).Value == null){
+			id = last_id++;
+		} else {
+			this.id = temp.getInt();
+		}
 		this.name = row.getCell(NAME).Value.getString();
 		this.soldiers = new ArrayList<Soldier>();
 		this.subUnits = new ArrayList<OrganisationalUnit>();
@@ -177,7 +183,7 @@ public class OrganisationalUnit extends Row  {
 	}
 
 	public void addSubUnit(OrganisationalUnit unit){
-		Database.UNIT_PARENTS.add(this, unit);
+		Database.UNIT_PARENTS.add(unit, this);
 	}
 	
 	/**Get the number of soldiers in this unit

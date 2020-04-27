@@ -1,5 +1,6 @@
 package com.yuri.commanderscompanion.api;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -7,6 +8,7 @@ import dbAPI.Column;
 import dbAPI.Constraint;
 import dbAPI.DatabaseCell;
 import dbAPI.DatabaseDataType;
+import dbAPI.DatabaseValue;
 import dbAPI.ForeignKeyConstraint;
 import dbAPI.IColumn;
 import dbAPI.IRow;
@@ -27,11 +29,11 @@ public class Log extends Row {
 			new ForeignKeyConstraint("unit_id", OrganisationalUnits.NAME + '(' + OrganisationalUnit.ID.getName() + ')'),
 			Constraint.NOT_NULL);*/
 	/**The column of this log's id*/
-	public static final IColumn DATE = new Column("date", 2, DatabaseDataType.DATETIME,
+	public static final IColumn DATE = new Column("date", 2, DatabaseDataType.STRING,
 			Constraint.NOT_NULL);
 	
 	/**The last row's id*/
-	protected static int last_id = 0;
+	protected static int last_id = 1;
 	/**This row's id*/
 	protected int id;
 	/**This row's type*/
@@ -58,7 +60,8 @@ public class Log extends Row {
 			new DatabaseCell(ID, null, DatabaseDataType.INTEGER),
 			new DatabaseCell(LOG_TYPE_ID, type.id, DatabaseDataType.INTEGER),
 			//new DatabaseCell(UNIT_ID, unit.id, DatabaseDataType.INTEGER),
-			new DatabaseCell(DATE, time, DatabaseDataType.DATETIME)
+			new DatabaseCell(DATE, SQLiteDatabaseHelper.SIMPLE_DATE_FORMATTER.format(time),
+					DatabaseDataType.STRING)
 		);
 		this.id = last_id++;
 		this.entries = new ArrayList<LogEntry>();
@@ -74,11 +77,20 @@ public class Log extends Row {
 	public Log(IRow row) {
 		//this(row.getCell(ID), row.getCell(LOG_TYPE_ID), row.getCell(UNIT_ID), row.getCell(DATE));
 		this(GeneralHelper.getCells(row, Logs.COLUMNS));
-		this.id = row.getCell(ID).Value.getInt();
-		if (id > last_id) {
-			last_id = id;
+		DatabaseValue temp;
+		if ((temp = row.getCell(ID).Value).Value == null){
+			this.id = last_id++;
+		} else {
+			this.id = temp.getInt();
+			if (id > last_id) {
+				last_id = id;
+			}
 		}
-		this.time = (Date)row.getCell(DATE).Value.Value;
+		try {
+			this.time = SQLiteDatabaseHelper.SIMPLE_DATE_FORMATTER.parse(row.getCell(DATE).Value.getString());
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
 		this.type = Database.LOG_TYPES.getRow(new SingularPrimaryKey(row.getCell(LOG_TYPE_ID)));
 		//this.unit = Database.UNITS.getRow(new SingularPrimaryKey(row.getCell(UNIT_ID)));
 		this.unit = this.type.unit;

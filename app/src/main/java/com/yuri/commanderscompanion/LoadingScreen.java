@@ -6,6 +6,7 @@ import android.view.Window;
 import android.widget.ProgressBar;
 
 import com.yuri.commanderscompanion.api.Database;
+import com.yuri.commanderscompanion.api.GeneralHelper;
 
 import androidx.appcompat.app.AppCompatActivity;
 import dbAPI.ITable;
@@ -38,11 +39,13 @@ public class LoadingScreen extends AppCompatActivity {
             for (ITable table : Database.TABLES){
                 if (table == Database.COMMANDERS){
                     continue;
-                }
-                Database.HELPER.create(table);
-                int diff = loading_load_bar.getMax() / Database.TABLES.length;
-                loading_load_bar.incrementProgressBy(diff);
             }
+                Database.HELPER.create(table);
+                /*int diff = loading_load_bar.getMax() / Database.TABLES.length;
+                loading_load_bar.incrementProgressBy(diff);
+                loading_load_bar.invalidate();*/
+            }
+            GeneralHelper.testDataInsert();
             dbExists = true;
         } else {
             for (SinglePrimaryKeyCacheTable table : Database.TABLES){
