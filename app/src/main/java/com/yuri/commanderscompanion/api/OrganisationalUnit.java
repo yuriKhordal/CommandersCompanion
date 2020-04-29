@@ -1,6 +1,8 @@
 package com.yuri.commanderscompanion.api;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Stack;
 
 import dbAPI.Column;
@@ -239,14 +241,14 @@ public class OrganisationalUnit extends Row  {
 	 * @return True if there are sub-units, otherwise false
 	 */
 	public boolean hasSubUnits() {
-		return subUnits.isEmpty();
+		return !subUnits.isEmpty();
 	}
 	
 	/**Check if this unit has soldiers
 	 * @return True if there are soldiers, otherwise false
 	 */
 	public boolean hasSoldiers() {
-		return soldiers.isEmpty();
+		return !soldiers.isEmpty();
 	}
 	
 	/**Get a soldier based on index
@@ -291,6 +293,11 @@ public class OrganisationalUnit extends Row  {
 		}
 		throw new IllegalArgumentException("No soldier with id('" + id + "') in '" + name + "'");
 	}
+
+    /**Get all the soldiers in the unit excluding subunit's soldiers
+     * @return A read-only list of soldiers
+     */
+	public List<Soldier> getSoldiers(){ return Collections.unmodifiableList(soldiers); }
 	
 	/**Get a subunit based on index
 	 * @param index The index of the subunit
@@ -299,6 +306,12 @@ public class OrganisationalUnit extends Row  {
 	public OrganisationalUnit getOU(int index) {
 		return subUnits.get(index);
 	}
+
+    /**Get all the unit's sub units. Only gets the units that are directly under this unit, all
+     * other units that are below those sub units are not returned
+     * @return A read-only list of units
+     */
+	public List<OrganisationalUnit> getSubUnits(){ return Collections.unmodifiableList(subUnits); }
 	
 	/**Get this unit's commander
 	 * @return The commander of this unit
@@ -330,10 +343,10 @@ public class OrganisationalUnit extends Row  {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (!super.equals(obj)) { return false; }
+		//if (!super.equals(obj)) { return false; }
 		OrganisationalUnit unit = (OrganisationalUnit) obj;
 
-		return unit.id == id && unit.commander.equals(commander) && unit.type == type && unit.name == name;
+		return unit.id == id && GeneralHelper.equals(unit.commander, commander) && unit.type == type && unit.name == name;
 	}
 	
 	@Override

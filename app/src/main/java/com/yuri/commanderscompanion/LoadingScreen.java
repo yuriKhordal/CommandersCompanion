@@ -59,7 +59,7 @@ public class LoadingScreen extends AppCompatActivity {
             }
         }
 
-        Intent intent = MainActivity.makeIntent(this);
+        Intent intent = UnitsOverviewActivity.makeIntent(this);
         startActivity(intent);
     }
 

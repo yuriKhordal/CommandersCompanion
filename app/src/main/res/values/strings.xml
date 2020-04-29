@@ -2,6 +2,7 @@
     <string name="app_name">עזר מפקד</string>
     <string name="soldiers_title">חיילים</string>
     <string name="settings_title">הגדרות</string>
+    <string name="units_overview_title">יחידות</string>
 
     <!--Toolbar-->
     <string name="toolbar_btn_menu_placeholder">menu</string>

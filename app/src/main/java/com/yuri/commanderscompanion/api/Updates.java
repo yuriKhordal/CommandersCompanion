@@ -3,7 +3,6 @@ package com.yuri.commanderscompanion.api;
 import java.util.ArrayList;
 
 import dbAPI.DatabaseCell;
-import dbAPI.IRow;
 import dbAPI.ITable;
 
 /**Represents all the rows that were updated*/
@@ -23,53 +22,77 @@ public class Updates {
      * @param table The table of the row
      * @param row The row that was updated
      */
-    public void add(ITable table, IRow row){
-        updates.add(new Update(table, row));
+    public void add(ITable table, SQLiteRow row, DatabaseCell...cells){
+        updates.add(new Update(table.getName(), row.getRowId()));
     }
 
     public void update(){
         for (Update update : updates){
-            ITable table = update.table;
-            IRow row = update.row;
-            helper.update(update.table, update.row, getWhere(row));
+            helper.executeSql(update.getUpdateString(helper));
         }
         updates.clear();
     }
 
-    /**Get the condition for finding the row within the table
-     * @param row The row to find
-     * @return A string of the sql condition
-     */
-    private String getWhere(IRow row){
-        StringBuilder str = new StringBuilder();
-        int i = 0;
-
-        for (DatabaseCell cell : row.getPrimaryKey().getCells()){
-            str.append(cell.getColumn().getName()).append(" = ");
-            str.append(helper.DatabaseValueToString(cell.Value));
-            i++;
-            if (i < row.getPrimaryKey().getKeysCount()){
-                str.append(",\n");
-            }
-        }
-
-        return str.toString();
-    }
+//    /**Get the condition for finding the row within the table
+//     * @param row The row to find
+//     * @return A string of the sql condition
+//     */
+//    private String getWhere(IRow row){
+//        StringBuilder str = new StringBuilder();
+//        int i = 0;
+//
+//        for (DatabaseCell cell : row.getPrimaryKey().getCells()){
+//            str.append(cell.getColumn().getName()).append(" = ");
+//            str.append(helper.DatabaseValueToString(cell.Value));
+//            i++;
+//            if (i < row.getPrimaryKey().getKeysCount()){
+//                str.append(",\n");
+//            }
+//        }
+//
+//        return str.toString();
+//    }
 
     /**Represents a row that was updated*/
-    protected static class Update{
+    protected static class Update {
         /**The table that the row is a part of*/
-        public ITable table;
+        public String table;
         /**The row that was updated*/
-        public IRow row;
+        public int rowid;
+        /**The cells that were updated*/
+        public DatabaseCell[] updated;
 
-        /**Initialize a new row update a row and it's table
-         * @param table The row's table
-         * @param row The updated row
+        /**Initialize a new row update with a row id and it's table
+         * @param table The row's table name
+         * @param rowid The updated row's id
          */
-        public Update(ITable table, IRow row){
+        public Update(String table, int rowid, DatabaseCell...cells) {
             this.table = table;
-            this.row = row;
+            this.rowid = rowid;
+            updated = cells;
+        }
+
+        /**Get the string for updating the row
+         * @param helper A helper object
+         * @return An sql string for updating the row
+         */
+        public String getUpdateString(SQLiteDatabaseHelper helper){
+            StringBuilder str = new StringBuilder();
+
+            str.append("UPDATE ").append(table).append(" SET\n");
+            for (int i = 0; i < updated.length; i++){
+                str.append(updated[i].getColumn().getName());
+                str.append(" = ");
+                str.append(helper.DatabaseValueToString(updated[i].Value));
+
+                if (i < updated.length - 1){
+                    str.append(',');
+                }
+                str.append('\n');
+            }
+            str.append("WHERE rowid = ").append(rowid);
+
+            return str.toString();
         }
     }
 }

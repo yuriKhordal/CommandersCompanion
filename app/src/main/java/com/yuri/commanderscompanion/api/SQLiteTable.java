@@ -9,8 +9,10 @@ import dbAPI.IndexConstraint;
 import dbAPI.PrimaryKeyConstraint;
 import dbAPI.SinglePrimaryKeyCacheTable;
 
-public class SQLiteTable<T extends IRow> extends SinglePrimaryKeyCacheTable<T> {
+/**Represents a table in an sqlite database*/
+public class SQLiteTable<T extends SQLiteRow> extends SinglePrimaryKeyCacheTable<T> {
 
+    /**The last row that was added to the table*/
     protected T last_row_added;
 
     /**Initialize this table with a name, primary key/s, indices, and columns
@@ -61,5 +63,9 @@ public class SQLiteTable<T extends IRow> extends SinglePrimaryKeyCacheTable<T> {
     @Override
     public T getRow(IPrimaryKey key) {
         return super.getRow(key);
+    }
+
+    public T getRowById(int rowid){
+        return rowsMap.get(rowid);
     }
 }

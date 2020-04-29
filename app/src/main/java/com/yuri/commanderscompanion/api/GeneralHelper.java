@@ -15,6 +15,13 @@ public final class GeneralHelper {
     /**The prime number to multiply the hash by for each object*/
     private static final int HASH_PRIME = 31;
 
+    // ---- Shared static variables ----
+
+    /**The current unit being worked on*/
+    public static OrganisationalUnit currentUnit;
+
+    // ---- static functions ----
+
     /**Hash an array of object
      * @param objects The objects to produce the hash code from
      * @return A hash code, produced from hashing all the given objects
@@ -25,6 +32,14 @@ public final class GeneralHelper {
             hash += HASH_PRIME * hash + (object == null ? 0 : object.hashCode());
         }
         return hash;
+    }
+
+    public static boolean equals(Object obj1, Object obj2){
+        if (obj1 == null){
+            return obj2 == null;
+        }
+        if (obj2 == null) { return false; }
+        return obj1.equals(obj2);
     }
 
     /**Get all the columns that are not primary(actually gets all columns except the first)

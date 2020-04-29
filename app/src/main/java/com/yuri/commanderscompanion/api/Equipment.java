@@ -8,11 +8,10 @@ import dbAPI.DatabaseValue;
 import dbAPI.ForeignKeyConstraint;
 import dbAPI.IColumn;
 import dbAPI.IRow;
-import dbAPI.Row;
 import dbAPI.SingularPrimaryKey;
 
 /**Represents a soldier's equipment and a row in a database*/
-public class Equipment extends Row {
+public class Equipment extends SQLiteRow {
 	public static final IColumn SOLDIER_EQUIPMENT_ID = new Column("soldier_equipment_id", 0, DatabaseDataType.INTEGER,
 			Constraint.BASIC_PRIMARY_KEY_CONSTRAINT/*, Constraint.AUTO_INCREMENT*/);
 	/**The column of the equipment's owner id*/
@@ -27,9 +26,6 @@ public class Equipment extends Row {
 	/**The column of the equipment's status*/
 	public static final IColumn STATUS = new Column("status", 4, DatabaseDataType.STRING,
 			Constraint.NOT_NULL);
-	
-	/**Software auto incrementation*/
-	protected static int last_id = 1;
 	
 	/**Equipment-Soldier id*/
 	protected int soldier_equipment_id;
@@ -56,7 +52,7 @@ public class Equipment extends Row {
 				new DatabaseCell(NAME, name, DatabaseDataType.STRING),
 				new DatabaseCell(STATUS, status.toString(), DatabaseDataType.STRING)
 		);
-		this.soldier_equipment_id = last_id++;
+		this.soldier_equipment_id = OFFLINE_ROW_ID;
 		this.owner = Database.SOLDIERS.getRow(new SingularPrimaryKey(SOLDIER_ID, owner_id, DatabaseDataType.INTEGER));
 		this.owner.equipment.add(this);
 		this.serial = serial;
@@ -77,7 +73,7 @@ public class Equipment extends Row {
 				new DatabaseCell(NAME, name, DatabaseDataType.STRING),
 				new DatabaseCell(STATUS, status.toString(), DatabaseDataType.STRING)
 		);
-		this.soldier_equipment_id = last_id++;
+		this.soldier_equipment_id = OFFLINE_ROW_ID;
 		this.owner = Database.SOLDIERS.getRow(new SingularPrimaryKey(SOLDIER_ID, owner_id, DatabaseDataType.INTEGER));
 		this.owner.equipment.add(this);
 		this.name = name;
@@ -90,10 +86,9 @@ public class Equipment extends Row {
 		super(GeneralHelper.getCells(row, EquipmentTable.COLUMNS));
 		DatabaseValue temp;
 		if ((temp = row.getCell(SOLDIER_EQUIPMENT_ID).Value).Value == null) {
-			this.soldier_equipment_id = last_id++;
+			this.soldier_equipment_id = OFFLINE_ROW_ID;
 		} else {
 			this.soldier_equipment_id = temp.getInt();
-			last_id = soldier_equipment_id > last_id ? soldier_equipment_id+1 : last_id;
 		}
 		this.owner = Database.SOLDIERS.getRow(new SingularPrimaryKey(row.getCell(SOLDIER_ID)));
 		this.owner.equipment.add(this);
@@ -116,7 +111,7 @@ public class Equipment extends Row {
 	/**Get soldier-equipment unique id
 	 * @return soldier-equipment id
 	 */
-	public int getSoldier_equipment_id() {
+	public int getSoldierEquipmentId() {
 		return soldier_equipment_id;
 	}
 
