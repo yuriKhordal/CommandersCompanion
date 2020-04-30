@@ -8,11 +8,10 @@ import dbAPI.DatabaseValue;
 import dbAPI.ForeignKeyConstraint;
 import dbAPI.IColumn;
 import dbAPI.IRow;
-import dbAPI.Row;
 import dbAPI.SingularPrimaryKey;
 
 /**Represents a note of either a soldier or a unit and a row in the database*/
-public class Note extends Row {
+public class Note extends SQLiteRow {
 	/**A column of the note's id*/
 	public static final IColumn ID = new Column("id", 0, DatabaseDataType.INTEGER,
 			Constraint.BASIC_PRIMARY_KEY_CONSTRAINT/*, Constraint.AUTO_INCREMENT*/);

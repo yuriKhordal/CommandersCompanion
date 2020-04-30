@@ -6,10 +6,9 @@ import dbAPI.DatabaseCell;
 import dbAPI.DatabaseDataType;
 import dbAPI.IColumn;
 import dbAPI.IRow;
-import dbAPI.Row;
 
 /**Represents a sight and a database row*/
-public class Sight extends Row {
+public class Sight extends SQLiteRow {
 	/**The column of the serial of the sight*/
 	public static final IColumn SERIAL = new Column("serial", 0,
 			DatabaseDataType.INTEGER, Constraint.BASIC_PRIMARY_KEY_CONSTRAINT);

@@ -8,11 +8,10 @@ import dbAPI.DatabaseValue;
 import dbAPI.ForeignKeyConstraint;
 import dbAPI.IColumn;
 import dbAPI.IRow;
-import dbAPI.Row;
 import dbAPI.SingularPrimaryKey;
 
 /***Represents a type of log of soldiers and a row in the database*/
-public class LogType extends Row {
+public class LogType extends SQLiteRow {
 	/**The column of this log's id*/
 	public static final IColumn LOG_TYPE_ID = new Column("log_type_id", 0, DatabaseDataType.INTEGER,
 			Constraint.BASIC_PRIMARY_KEY_CONSTRAINT/*, Constraint.AUTO_INCREMENT*/);

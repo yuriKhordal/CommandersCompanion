@@ -12,11 +12,10 @@ import dbAPI.DatabaseValue;
 import dbAPI.ForeignKeyConstraint;
 import dbAPI.IColumn;
 import dbAPI.IRow;
-import dbAPI.Row;
 import dbAPI.SingularPrimaryKey;
 
 /**Represents a log and a row in the database*/
-public class Log extends Row {
+public class Log extends SQLiteRow {
 	/**The column of this log's id*/
 	public static final IColumn ID = new Column("id", 0, DatabaseDataType.INTEGER,
 			Constraint.BASIC_PRIMARY_KEY_CONSTRAINT/*, Constraint.AUTO_INCREMENT*/);

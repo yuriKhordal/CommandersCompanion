@@ -12,7 +12,7 @@ import dbAPI.Row;
 import dbAPI.SingularPrimaryKey;
 
 /**Represents a unit parents table*/
-public class UnitParents extends SQLiteTable<IRow> {
+public class UnitParents extends SQLiteTable<SQLiteRow> {
     /**The name of this table*/
     public static final String NAME = "UnitParents";
     /**The primary key id column*/
@@ -40,8 +40,8 @@ public class UnitParents extends SQLiteTable<IRow> {
     }
 
     /**@see IRowConverter#convertFromIRow(IRow) */
-    protected static IRow convert(IRow row){
-        return new Row(
+    protected static SQLiteRow convert(IRow row){
+        return new SQLiteRow(
                 new DatabaseCell(UNIT_PARENT_ID, row.getValue(UNIT_PARENT_ID)),
                 new DatabaseCell(UNIT_ID, row.getValue(UNIT_ID)),
                 new DatabaseCell(PARENT_ID, row.getValue(PARENT_ID))

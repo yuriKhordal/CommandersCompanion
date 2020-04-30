@@ -11,11 +11,10 @@ import dbAPI.DatabaseValue;
 import dbAPI.ForeignKeyConstraint;
 import dbAPI.IColumn;
 import dbAPI.IRow;
-import dbAPI.Row;
 import dbAPI.SingularPrimaryKey;
 
 /**Represents a disciplinary notice and a row in a table*/
-public class Notice extends Row {
+public class Notice extends SQLiteRow {
 	/**The column of the id of the notice*/
 	public static final IColumn ID = new Column("id", 0, DatabaseDataType.INTEGER,
 			/*Constraint.AUTO_INCREMENT, */Constraint.BASIC_PRIMARY_KEY_CONSTRAINT);

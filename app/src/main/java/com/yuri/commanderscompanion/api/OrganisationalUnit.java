@@ -12,10 +12,9 @@ import dbAPI.DatabaseDataType;
 import dbAPI.DatabaseValue;
 import dbAPI.IColumn;
 import dbAPI.IRow;
-import dbAPI.Row;
 
 /**Represents an organizational unit like a squad or a platoon and a row in the database*/
-public class OrganisationalUnit extends Row  {
+public class OrganisationalUnit extends SQLiteRow  {
 	/**The column of this unit's id*/
 	public static final IColumn ID = new Column("id", 0, DatabaseDataType.INTEGER,
 			Constraint.BASIC_PRIMARY_KEY_CONSTRAINT/*, Constraint.AUTO_INCREMENT*/);

@@ -7,11 +7,10 @@ import dbAPI.DatabaseDataType;
 import dbAPI.DatabaseValue;
 import dbAPI.IColumn;
 import dbAPI.IRow;
-import dbAPI.Row;
 import dbAPI.SingularPrimaryKey;
 
 /**Represents a type or a category of notes*/
-public class NoteType extends Row {
+public class NoteType extends SQLiteRow {
 	/**The column of the note type id*/
 	public static final IColumn ID = new Column("id", 0, DatabaseDataType.INTEGER,
 			Constraint.BASIC_PRIMARY_KEY_CONSTRAINT/*, Constraint.AUTO_INCREMENT*/);

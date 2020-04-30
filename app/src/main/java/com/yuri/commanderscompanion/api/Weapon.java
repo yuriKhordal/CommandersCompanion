@@ -8,11 +8,10 @@ import dbAPI.DatabaseValue;
 import dbAPI.ForeignKeyConstraint;
 import dbAPI.IColumn;
 import dbAPI.IRow;
-import dbAPI.Row;
 import dbAPI.SingularPrimaryKey;
 
 /**Represents a weapon and a database row*/
-public class Weapon extends Row{
+public class Weapon extends SQLiteRow{
 	/**The column of the weapon's serial*/
 	public static final IColumn SERIAL = new Column("serial", 0, DatabaseDataType.INTEGER,
 			Constraint.BASIC_PRIMARY_KEY_CONSTRAINT);

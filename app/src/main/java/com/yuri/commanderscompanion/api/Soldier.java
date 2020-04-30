@@ -10,11 +10,10 @@ import dbAPI.DatabaseValue;
 import dbAPI.ForeignKeyConstraint;
 import dbAPI.IColumn;
 import dbAPI.IRow;
-import dbAPI.Row;
 import dbAPI.SingularPrimaryKey;
 
 /**Represents a soldier and a database row*/
-public class Soldier extends Row{
+public class Soldier extends SQLiteRow{
 	/**The column of the soldier's service number*/
 	public static final Column ID = new Column("id", 0, DatabaseDataType.INTEGER,
 			Constraint.BASIC_PRIMARY_KEY_CONSTRAINT);
