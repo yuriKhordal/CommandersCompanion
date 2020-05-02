@@ -1,7 +1,12 @@
 package com.yuri.commanderscompanion.api;
 
+import android.content.Context;
+
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
+import java.util.Stack;
 
 import dbAPI.DatabaseCell;
 import dbAPI.DatabaseValue;
@@ -80,6 +85,90 @@ public final class GeneralHelper {
             cells[i] = new DatabaseCell(column, value);
         }
         return cells;
+    }
+
+    /**Return a given string repeated multiple times
+     * @param string The string to repeat
+     * @param times The amount of times to repeat a string
+     * @return The string 'times' times repeated
+     */
+    public static String multiplyString(final String string, int times){
+        StringBuilder str = new StringBuilder(string.length()*times);
+
+        for (int i = 0; i < times; i++){
+            str.append(string);
+        }
+
+        return str.toString();
+    }
+
+    public static int dpToPixels(Context context, int dp){
+        float density = context.getResources().getDisplayMetrics().density;
+        return (int)(dp * density + 0.5f);
+    }
+
+    public static <T> void quickSort(List<T> list, Comparator<T> comparator){
+        Stack<Integer> pivotIndex = new Stack<Integer>();
+        Stack<Integer> startIndex = new Stack<Integer>();
+        Stack<Integer> endIndex = new Stack<Integer>();
+        pivotIndex.push(list.size() / 2);
+        startIndex.push(0);
+        endIndex.push(list.size() - 1);
+
+        while (!pivotIndex.isEmpty()){
+            int start, pivot, end;
+            start = startIndex.pop();
+            pivot = pivotIndex.pop();
+            end = endIndex.pop();
+
+            //if (end - start <= 0) { continue; }
+            /*if (end - start == 1){
+                T startVal = sorted.get(start);
+                if (comparator.compare(startVal, sorted.get(end)) > 0){
+                    sorted.remove(start);
+                    sorted.add(end, startVal);
+                }
+            }*/
+
+            T pivotVal = list.get(pivot);
+            for (int i = start; i < pivot; i++){
+                T value = list.get(i);
+                if (comparator.compare(value, pivotVal) > 0){
+                    list.remove(i);
+                    list.add(pivot, value);
+                    pivot--;
+                    //since the value at i got deleted, i now points to the next value
+                    i--;
+                }
+            }
+
+            for (int i = pivot + 1; i <= end; i++){
+                T value = list.get(i);
+                if (comparator.compare(value, pivotVal) < 0){
+                    list.remove(i);
+                    list.add(start, value);
+                    pivot++;
+                    //since the value at i got deleted, i now points to the next value
+                    i--;
+                }
+            }
+
+            if (pivot > start) {
+                //Add left side of the pivot
+                startIndex.push(start);
+                //basically start + (end - start)/2
+                pivotIndex.push(start + (pivot - 1 - start) / 2);
+                endIndex.push(pivot - 1);
+            }
+
+            if (pivot < end) {
+                //Add right side of the pivot
+                startIndex.push(pivot + 1);
+                //basically start + (end - start)/2
+                pivotIndex.push(pivot + 1 + (end - pivot - 1) / 2);
+                endIndex.push(end);
+            }
+        }
     }
 
     /**Insert data into database to test all tables*/
@@ -186,5 +275,34 @@ public final class GeneralHelper {
             Database.ENTRIES.insert(en9 = new LogEntry(l1, so8, "Base"));
             Database.ENTRIES.insert(en10 = new LogEntry(l1, so9, "Base"));
         }
+    }
+
+    public static int stringCompare(String s1, String s2){
+        //if s1 is empty and s2 is not, then s1 < s2
+        if (s1 == null || s1.equals("")){
+            return s2 == null || s2.equals("") ? 0 : -1;
+        }
+        //if s2 is empty and s1 is not then s1 > s2
+        if (s2 == null || s2 == ""){
+            return 1;
+        }
+        s1 = s1.toLowerCase();
+        s2 = s2.toLowerCase();
+        if (s1.equals(s2)){
+            return 0;
+        }
+
+        int i = 0;
+        while (i < s1.length()){
+            //if s1 is longer then s2 and all chars prior are equal, then s1 > s2
+            if (i >= s2.length()){ return 1; }
+            if (s1.charAt(i) == s2.charAt(i)) {
+                i++;
+            } else {
+                return s1.charAt(i) > s2.charAt(i) ? 1 : -1;
+            }
+        }
+
+        return 0;
     }
 }

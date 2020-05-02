@@ -319,6 +319,20 @@ public class OrganisationalUnit extends SQLiteRow  {
 		return this.commander;
 	}
 
+	/**Get the name of the unit
+	 * @return The name of the unit
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**Get the type of the unit
+	 * @return The type of the unit
+	 */
+	public String getType() {
+		return type;
+	}
+
 	@Override
 	public boolean hasPrimaryKey() {
 		return true;
