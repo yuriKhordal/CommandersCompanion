@@ -100,7 +100,7 @@ public class UnitActivity extends BaseActivity {
                     fragment = LogsFragment.newInstance("", "");
                 }
                 getSupportFragmentManager().beginTransaction().replace(
-                        R.id.unit_scroll, fragment).commit();
+                        R.id.unit_side_scroll, fragment).commit();
             }
             @Override
             public void onTabUnselected(TabLayout.Tab tab) { }

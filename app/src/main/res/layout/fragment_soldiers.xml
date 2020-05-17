@@ -102,7 +102,7 @@
     </TableRow>
 
     <TableRow
-        android:id="@+id/unit_test_row_logs"
+        android:id="@+id/test_log"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 

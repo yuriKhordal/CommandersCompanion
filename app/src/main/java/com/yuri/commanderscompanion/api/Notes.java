@@ -37,6 +37,16 @@ public class Notes extends SQLiteTable<Note> {
 	}
 
 	@Override
+	public void removeRow(Note note) {
+		super.removeRow(note);
+		if (note.type.ofSoldier){
+			note.type.ownerS.notes.remove(note);
+		} else {
+			note.type.ownerOU.notes.remove(note);
+		}
+	}
+
+	@Override
 	public Notes clone() {
 		Notes notes = new Notes();
 		notes.helper = helper.clone();

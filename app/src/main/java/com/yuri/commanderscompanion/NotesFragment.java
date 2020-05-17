@@ -122,7 +122,7 @@ public class NotesFragment extends Fragment {
 
             TextView body = new TextView(context);
             params = new LinearLayout.LayoutParams(
-                    0, ViewGroup.LayoutParams.MATCH_PARENT, 1);
+                    0, ViewGroup.LayoutParams.WRAP_CONTENT, 1);
             body.setLayoutParams(params);
             body.setBackgroundResource(R.drawable.table_cell);
             body.setLines(1);
@@ -217,7 +217,7 @@ public class NotesFragment extends Fragment {
     }
 
     /**Configure the views after setting them*/
-    public void configureViews(){
+        public void configureViews(){
         if (!unit.getNotes().isEmpty()) {
             HashMap<NoteType, ArrayList<Note>> map = new HashMap<>();
             for (Note note : unit.getNotes()) {

@@ -55,11 +55,11 @@ public class Note extends SQLiteRow {
 		);
 		id = last_id++;
 		this.type = type;
-		if (type.ofSoldier) {
+		/*if (type.ofSoldier) {
 			type.ownerS.notes.add(this);
 		} else {
 			type.ownerOU.notes.add(this);
-		}
+		}*/
 		this.head = head;
 		this.body = body;
 	}
@@ -160,8 +160,10 @@ public class Note extends SQLiteRow {
 	@Override
 	public boolean equals(Object obj) {
 		if (!super.equals(obj)) { return false; }
+		if (this == obj) { return true;}
+		if (!(obj instanceof Note)) { return false; }
 		Note note = (Note)obj;
-		return note.id == id && note.type.equals(type) && note.head == head && note.body == body;
+		return note.id == id && note.type.equals(type) && note.head.equals(head) && note.body.equals(body);
 	}
 	
 	@Override

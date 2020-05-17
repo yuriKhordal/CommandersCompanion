@@ -18,14 +18,16 @@ import com.yuri.commanderscompanion.api.Database;
 import com.yuri.commanderscompanion.api.Note;
 import com.yuri.commanderscompanion.api.NoteType;
 import com.yuri.commanderscompanion.api.OrganisationalUnit;
+import com.yuri.commanderscompanion.api.SQLiteDataReader;
 import com.yuri.commanderscompanion.api.Soldier;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 
 import androidx.appcompat.app.AlertDialog;
 import dbAPI.DatabaseCell;
 import dbAPI.DatabaseDataType;
+import dbAPI.IColumn;
+import dbAPI.IRow;
 
 public class NoteActivity extends BaseActivity {
     /**The name of the extra rowid value in the intent*/
@@ -154,7 +156,11 @@ public class NoteActivity extends BaseActivity {
             String head, body;
             head = txt_head.getText().toString();
             body = txt_body.getText().toString();
-            if (mode != INTENT_EXTRA_MODE_CREATE_FOR_TYPE) {
+            if (types.isEmpty()){
+                Toast.makeText(this,
+                        "אי אפשר ליצור הערה ללא קטגוריה", Toast.LENGTH_LONG).show();
+                return;
+            }else if (mode != INTENT_EXTRA_MODE_CREATE_FOR_TYPE) {
                 type = types.get(cmb_type.getSelectedItemPosition());
             }
 
@@ -165,8 +171,8 @@ public class NoteActivity extends BaseActivity {
                 return;
             }
             note = new Note(type, head, body);
-//            Database.NOTES.add(note);
-//            note = Database.NOTES.getLastRowAdded();
+            Database.NOTES.add(note);
+            note = Database.NOTES.getLastRowAdded();
 
             mode = INTENT_EXTRA_MODE_UPDATE;
             Toast.makeText(this , "ההערה " + note.getHead() + " הוספה בהצלחה",
@@ -213,7 +219,7 @@ public class NoteActivity extends BaseActivity {
 
         types = new ArrayList<>();
         typeNames = new ArrayList<>(types.size());
-        HashSet<NoteType> hashSet = new HashSet<>();
+        /*HashSet<NoteType> hashSet = new HashSet<>();
         if (mode == INTENT_EXTRA_MODE_CREATE_FOR_SOLDIER) {
             for (Note note : soldier.getNotes()) {
                 if (hashSet.contains(note.getType())){ continue; }
@@ -232,7 +238,25 @@ public class NoteActivity extends BaseActivity {
             types.add(type);
             typeNames.add(type.getName());
         }
-        hashSet.clear();
+        hashSet.clear();*/
+
+        if (mode != INTENT_EXTRA_MODE_CREATE_FOR_TYPE){
+            int id = mode == INTENT_EXTRA_MODE_CREATE_FOR_SOLDIER ? soldier.getID() : unit.getRowId();
+            int ofSoldier = mode == INTENT_EXTRA_MODE_CREATE_FOR_SOLDIER ? 1 : 0;
+            String where = NoteType.OWNER_ID.getName() + " = " + id + " AND\n" +
+                    NoteType.OF_SOLDIER.getName() + " = " + ofSoldier;
+            SQLiteDataReader reader = (SQLiteDataReader) Database.NOTE_TYPES.select(
+                    new IColumn[]{NoteType.ID},where);
+
+            for (IRow row : reader){
+                NoteType type = Database.NOTE_TYPES.getRowById(row.getValue(NoteType.ID).getInt());
+                types.add(type);
+                typeNames.add(type.getName());
+            }
+        } else {
+            types.add(type);
+            typeNames.add(type.getName());
+        }
 
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, typeNames);
 //        adapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
