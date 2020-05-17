@@ -191,6 +191,13 @@ public class Soldier extends SQLiteRow{
 		this.setValue(RANK.getIndex(), new DatabaseValue(rank, DatabaseDataType.STRING));
 	}
 
+	/**Get this soldier's unit
+	 * @return The unit of this soldier
+	 */
+	public OrganisationalUnit getUnit() {
+		return unit;
+	}
+
 	/**Get this soldier's weapon
 	 * @return The weapon of this soldier
 	 */
@@ -204,6 +211,27 @@ public class Soldier extends SQLiteRow{
 	public void setWeapon(Weapon weapon) {
 		this.weapon = weapon;
 		this.setValue(WEAPON_SERIAL.getIndex(), new DatabaseValue(weapon.getSerial(), DatabaseDataType.INTEGER));
+	}
+
+	/**Get the soldier's notes
+	 * @return An array of notes
+	 */
+	public ArrayList<Note> getNotes() {
+		return notes;
+	}
+
+	/**Get the soldier's equipment
+	 * @return An array of equipment
+	 */
+	public ArrayList<Equipment> getEquipment() {
+		return equipment;
+	}
+
+	/**Get the soldier's notices
+	 * @return An array of notices
+	 */
+	public ArrayList<Notice> getNotices() {
+		return notices;
 	}
 
 	@Override

@@ -53,6 +53,27 @@ public class SQLiteTable<T extends SQLiteRow> extends SinglePrimaryKeyCacheTable
         last_row_added = rows.get(rows.size() - 1);
     }
 
+    /**Checks if the row is in the table
+     * @param row The row to check
+     * @return True if the row exits, false otherwise
+     */
+    public boolean hasRow(T row){
+        return rowsMap.containsKey(row);
+    }
+
+    /**Remove row from cache and database
+     * @param row The row to remove
+     */
+    public void removeRow(T row){
+        String where = "rowid = " + row.getRowId();
+        remove(row);
+        helper.delete(this, where);
+    }
+
+    public T getRowById(int rowid){
+        return rowsMap.get(rowid);
+    }
+
     // ---- Conflict resolution ----
 
     @Override
@@ -63,9 +84,5 @@ public class SQLiteTable<T extends SQLiteRow> extends SinglePrimaryKeyCacheTable
     @Override
     public T getRow(IPrimaryKey key) {
         return super.getRow(key);
-    }
-
-    public T getRowById(int rowid){
-        return rowsMap.get(rowid);
     }
 }

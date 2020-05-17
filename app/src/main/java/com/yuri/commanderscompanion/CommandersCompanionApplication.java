@@ -17,7 +17,9 @@ public class CommandersCompanionApplication extends Application {
     public void onCreate() {
         super.onCreate();
         AppSettings.init(this);
+        if (BuildConfig.DEBUG){
+            AppSettings.setDebugMode(true, this);
+        }
         LoadingScreen.dbExists = getFileStreamPath(Database.FILE_NAME).exists();
-        Database.init(getFilesDir().getAbsolutePath() + "/" + Database.FILE_NAME);
     }
 }

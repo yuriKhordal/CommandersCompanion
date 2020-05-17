@@ -122,7 +122,7 @@ public class OrganisationalUnit extends SQLiteRow  {
 			if (subUnit == null) {
 				throw new IllegalArgumentException("subUnit can't be null!");
 			}
-			this.subUnits.add(subUnit);
+			this.addSubUnit(subUnit);
 		}
 	}
 	
@@ -150,7 +150,7 @@ public class OrganisationalUnit extends SQLiteRow  {
 			if (subUnit == null) {
 				throw new IllegalArgumentException("subUnit can't be null!");
 			}
-			this.subUnits.add(subUnit);
+			this.addSubUnit(subUnit);
 		}
 		for (Soldier soldier : soldiers) {
 			if (soldier == null) {
@@ -178,13 +178,27 @@ public class OrganisationalUnit extends SQLiteRow  {
 		this.subUnits = new ArrayList<OrganisationalUnit>();
 		this.type = row.getCell(TYPE).Value.getString();
 	}
-	
+
+	/**@see #getColumns()*/
 	public static IColumn[] getStaticColumns() {
 		return new IColumn[] {ID, COMMANDER_ID, TYPE, NAME};
 	}
 
+	/**Add a sub unit to this unit
+	 * @param unit The unit to add
+	 */
 	public void addSubUnit(OrganisationalUnit unit){
 		Database.UNIT_PARENTS.add(unit, this);
+	}
+
+	/**Remove the soldier from the unit
+	 * @param soldier The soldier to remove
+	 */
+	public void removeSoldier(Soldier soldier){
+		soldiers.remove(soldier);
+		if (Database.SOLDIERS.hasRow(soldier)){
+			Database.SOLDIERS.removeRow(soldier);
+		}
 	}
 	
 	/**Get the number of soldiers in this unit
@@ -332,6 +346,16 @@ public class OrganisationalUnit extends SQLiteRow  {
 	public String getType() {
 		return type;
 	}
+
+	/**Get all the notes of the unit
+	 * @return A read-only list of notes
+	 */
+	public List<Note> getNotes(){ return Collections.unmodifiableList(notes); }
+
+	/**Get all the logs of the unit
+	 * @return A read-only list of logs
+	 */
+	public List<Log> getLogs(){ return Collections.unmodifiableList(logs); }
 
 	@Override
 	public boolean hasPrimaryKey() {

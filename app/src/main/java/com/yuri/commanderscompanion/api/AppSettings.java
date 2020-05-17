@@ -24,6 +24,10 @@ public class AppSettings {
     public static final String STARTING_PAGE_NAME = "startingPage";
     /**The default value of the 'startingPage' setting*/
     public static final Page STARTING_PAGE_DEFAULT = Page.UnitsOverview;
+    /**The name of the 'debugMode' setting*/
+    public static final String DEBUG_MODE_NAME = "debugMode";
+    /**The default value of the 'debugMode' setting*/
+    public static final boolean DEBUG_MODE_DEFAULT = false;
 
     /**The preferences object with all the settings*/
     protected static SharedPreferences preferences;
@@ -35,8 +39,13 @@ public class AppSettings {
     /**The current chosen theme*/
     protected static Theme appTheme;
 
+    /**Represents the different pages in the app*/
     public enum Page{ UnitsOverview }
+    /**The current chosen starting page*/
     protected static Page startingPage;
+
+    /**Whether the app is in debug mode*/
+    protected static boolean debugMode;
 
     // ---- AppSettings and SharedPreferences methods ----
 
@@ -64,8 +73,11 @@ public class AppSettings {
             setStartingPage(STARTING_PAGE_DEFAULT, context);
         }
 
-        String appThemeString = AppSettings.preferences.getString(APP_THEME_NAME, APP_THEME_DEFAULT_VALUE.name());
-        appTheme = appThemeString == Theme.Light.name() ? Theme.Light : Theme.Dark;
+        if (preferences.contains(DEBUG_MODE_NAME)){
+            debugMode = preferences.getBoolean(DEBUG_MODE_NAME, DEBUG_MODE_DEFAULT);
+        } else {
+            setDebugMode(DEBUG_MODE_DEFAULT, context);
+        }
     }
 
     /**Check whether the static class was initialized
@@ -110,8 +122,11 @@ public class AppSettings {
         editor.putBoolean(EXISTS_NAME, true);
         editor.putString(APP_THEME_NAME, APP_THEME_DEFAULT_VALUE.name());
         editor.putString(STARTING_PAGE_NAME, STARTING_PAGE_DEFAULT.name());
+        editor.putBoolean(DEBUG_MODE_NAME, DEBUG_MODE_DEFAULT);
         closeEditor(context);
         appTheme = APP_THEME_DEFAULT_VALUE;
+        startingPage = STARTING_PAGE_DEFAULT;
+        debugMode = DEBUG_MODE_DEFAULT;
     }
     public static void setDefaultSettings(){ setDefaultSettings(null); }
 
@@ -124,6 +139,11 @@ public class AppSettings {
      * @return The starting page
      */
     public static Page getStartingPage(){ return startingPage; }
+
+    /**Check if the app is in debug mode
+     * @return True if debug mode is on, otherwise false
+     */
+    public static boolean isDebugMode(){ return debugMode; }
 
     /**Set this app's current theme
      * @param appTheme The new theme
@@ -151,12 +171,33 @@ public class AppSettings {
         Log.v(TAG, "Setting startingPage to " + page.name());
         AppSettings.startingPage = page;
         SharedPreferences.Editor editor = preferences.edit();
-        editor.putString(startingPage.name(), Page.UnitsOverview.name());
+        editor.putString(STARTING_PAGE_NAME, startingPage.name());
         if (commitEditor(editor, context)) {
-            Log.v(TAG, "Finished setting startingPage to " + startingPage.name());
+            Log.v(TAG, "Finished setting startingPage to " + page.name());
         }
     }
+    /**Set the app's starting page
+     * @param page The new starting page
+     */
     public static void setStartingPage(Page page) { setStartingPage(page, null); }
+
+    /**Set the app's debug mode on or off
+     * @param debugMode The new mode
+     * @param context Optional, a context for making a text bubble
+     */
+    public static void setDebugMode(boolean debugMode, Context context){
+        Log.v(TAG, "Setting debugMode to " + debugMode);
+        AppSettings.debugMode = debugMode;
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putBoolean(DEBUG_MODE_NAME, debugMode);
+        if (commitEditor(editor, context)) {
+            Log.v(TAG, "Finished setting debugMode to " + debugMode);
+        }
+    }
+    /**Set the app's debug mode on or off
+     * @param debugMode The new mode
+     */
+    public static void setDebugMode(boolean debugMode){ setDebugMode(debugMode,null); }
 
     // ---- Internal methods ----
 

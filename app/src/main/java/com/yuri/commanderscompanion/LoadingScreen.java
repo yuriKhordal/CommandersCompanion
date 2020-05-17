@@ -35,6 +35,7 @@ public class LoadingScreen extends AppCompatActivity {
         setViews();
         configureViews();
 
+        Database.init(getFilesDir().getAbsolutePath() + "/" + Database.FILE_NAME);
         if (!dbExists){
             for (ITable table : Database.TABLES){
                 if (table == Database.COMMANDERS){
@@ -53,9 +54,9 @@ public class LoadingScreen extends AppCompatActivity {
                     continue;
                 }
                 table.load();
-                int diff = loading_load_bar.getMax() / Database.TABLES.length;
+                /*int diff = loading_load_bar.getMax() / (Database.TABLES.length - 1);//-1 cuz commanders
                 loading_load_bar.incrementProgressBy(diff);
-                loading_load_bar.invalidate();
+                loading_load_bar.invalidate();*/
             }
         }
 

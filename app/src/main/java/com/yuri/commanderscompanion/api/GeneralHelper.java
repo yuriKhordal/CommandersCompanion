@@ -176,6 +176,7 @@ public final class GeneralHelper {
         Sight s1,s2,s3,s4,s5,s6,s7,s8,s9,s10;
         Weapon w1, w2, w3, w4, w5, w6, w7, w8, w9, w10;
         OrganisationalUnit u1, u2, u3;
+        OrganisationalUnit a, a1, a1A, a1B, a2, a2A, a2B, b, b1, b1A, b1B, b2, b2A, b2B, C, CA, CB, CC;
         Soldier so1, so2, so3, so4, so5, so6, so7, so8, so9, so10;
         Equipment eq1, eq2, eq3, eq4, eq5, eq6, eq7, eq8, eq9, eq10;
         Notice nc1, nc2, nc3;
@@ -212,6 +213,44 @@ public final class GeneralHelper {
             Database.UNITS.insert(u3 = new OrganisationalUnit("Platoon", "1"));
             u3.addSubUnit(u1);
             u3.addSubUnit(u2);
+        } {
+            Database.UNITS.insert(a1A = new OrganisationalUnit("כיתה", "א1א"));
+            Database.UNITS.insert(a1B = new OrganisationalUnit("כיתה", "א1ב"));
+            Database.UNITS.insert(a2A = new OrganisationalUnit("כיתה", "א2א"));
+            Database.UNITS.insert(a2B = new OrganisationalUnit("כיתה", "א2ב"));
+            Database.UNITS.insert(b1A = new OrganisationalUnit("כיתה", "ב1א"));
+            Database.UNITS.insert(b1B = new OrganisationalUnit("כיתה", "ב1ב"));
+            Database.UNITS.insert(b2A = new OrganisationalUnit("כיתה", "ב2א"));
+            Database.UNITS.insert(b2B = new OrganisationalUnit("כיתה", "ב22"));
+            Database.UNITS.insert(CA = new OrganisationalUnit("כיתה", "3א"));
+            Database.UNITS.insert(CB = new OrganisationalUnit("כיתה", "3ב"));
+            Database.UNITS.insert(CC = new OrganisationalUnit("כיתה", "3ג"));
+
+            Database.UNITS.insert(a1 = new OrganisationalUnit("מחלקה", "א1"));
+            a1.addSubUnit(a1A);
+            a1.addSubUnit(a1B);
+            Database.UNITS.insert(a2 = new OrganisationalUnit("מחלקה", "א2"));
+            a2.addSubUnit(a2A);
+            a2.addSubUnit(a2B);
+            Database.UNITS.insert(b1 = new OrganisationalUnit("מחלקה", "ב1"));
+            b1.addSubUnit(b1A);
+            b1.addSubUnit(b1B);
+            Database.UNITS.insert(b2 = new OrganisationalUnit("מחלקה", "ב2"));
+            b2.addSubUnit(b2A);
+            b2.addSubUnit(b2B);
+            Database.UNITS.insert(C = new OrganisationalUnit("מחלקה", "3"));
+            C.addSubUnit(CA);
+            C.addSubUnit(CB);
+            C.addSubUnit(CC);
+
+            Database.UNITS.insert(a = new OrganisationalUnit("פלוגה", "א"));
+            a.addSubUnit(a1);
+            a.addSubUnit(a2);
+            Database.UNITS.insert(b = new OrganisationalUnit("פלוגה", "ב"));
+            b.addSubUnit(b1);
+            b.addSubUnit(b2);
+
+//            Database.UNITS.add(a1A, a1B, a1, a2A, a2B, a2, a, b1A, b1B, b1, b2A, b2B, b2, b, CA, CB, CC, C);
         } {
             Database.SOLDIERS.insert(so1 = new Soldier(u1, "name1", "Private", w1, 1020));
             Database.SOLDIERS.insert(so2 = new Soldier(u1, "name2", "Private", w2, 1021));

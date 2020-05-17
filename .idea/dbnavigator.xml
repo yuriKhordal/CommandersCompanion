@@ -23,11 +23,15 @@
     <autoscroll-to-editor value="false" />
     <autoscroll-from-editor value="true" />
     <show-object-properties value="true" />
-    <loaded-nodes />
+    <loaded-nodes>
+      <connection connection-id="5f8528db-86a2-4c79-a9a9-866b6f2c51c0">
+        <schema name="main" object-types="table, view" />
+      </connection>
+    </loaded-nodes>
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
     <connection id="5f8528db-86a2-4c79-a9a9-866b6f2c51c0">
-      <console name="Connection" type="STANDARD" schema="main" session="Main"><![CDATA[SELECT * FROM "OrganisationalUnits"]]></console>
+      <console name="Connection" type="STANDARD" schema="main" session="Main">SELECT * FROM &quot;Equipment&quot;</console>
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
@@ -37,9 +41,15 @@
     <connection id="5f8528db-86a2-4c79-a9a9-866b6f2c51c0" />
   </component>
   <component name="DBNavigator.Project.DatasetFilterManager">
-    <filter-actions connection-id="5f8528db-86a2-4c79-a9a9-866b6f2c51c0" dataset="main.OrganisationalUnits" active-filter-id="" />
-    <filter-actions connection-id="5f8528db-86a2-4c79-a9a9-866b6f2c51c0" dataset="main.UnitParents" active-filter-id="" />
-    <filter-actions connection-id="5f8528db-86a2-4c79-a9a9-866b6f2c51c0" dataset="main.Equipment" active-filter-id="" />
+    <filter-actions connection-id="5f8528db-86a2-4c79-a9a9-866b6f2c51c0" dataset="main.Soldiers" active-filter-id="EMPTY_FILTER" />
+    <filter-actions connection-id="5f8528db-86a2-4c79-a9a9-866b6f2c51c0" dataset="main.LogTypes" active-filter-id="EMPTY_FILTER" />
+    <filter-actions connection-id="5f8528db-86a2-4c79-a9a9-866b6f2c51c0" dataset="main.OrganisationalUnits" active-filter-id="EMPTY_FILTER" />
+    <filter-actions connection-id="5f8528db-86a2-4c79-a9a9-866b6f2c51c0" dataset="main.Sights" active-filter-id="EMPTY_FILTER" />
+    <filter-actions connection-id="5f8528db-86a2-4c79-a9a9-866b6f2c51c0" dataset="main.UnitParents" active-filter-id="EMPTY_FILTER" />
+    <filter-actions connection-id="5f8528db-86a2-4c79-a9a9-866b6f2c51c0" dataset="main.Notes" active-filter-id="EMPTY_FILTER" />
+    <filter-actions connection-id="5f8528db-86a2-4c79-a9a9-866b6f2c51c0" dataset="main.Equipment" active-filter-id="EMPTY_FILTER" />
+    <filter-actions connection-id="5f8528db-86a2-4c79-a9a9-866b6f2c51c0" dataset="main.android_metadata" active-filter-id="EMPTY_FILTER" />
+    <filter-actions connection-id="5f8528db-86a2-4c79-a9a9-866b6f2c51c0" dataset="main.LogEntries" active-filter-id="EMPTY_FILTER" />
   </component>
   <component name="DBNavigator.Project.EditorStateManager">
     <last-used-providers />

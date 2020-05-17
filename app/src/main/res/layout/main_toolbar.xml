@@ -19,6 +19,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_toStartOf="@id/toolbar_btn_menu"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
             app:autoSizeTextType="uniform" />
 
         <ImageButton

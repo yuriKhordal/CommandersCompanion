@@ -30,7 +30,15 @@ public class Soldiers extends SQLiteTable<Soldier> {
 	protected static Soldier convert(IRow row){
 		return new Soldier(row);
 	}
-	
+
+	@Override
+	public void removeRow(Soldier row) {
+		super.removeRow(row);
+		if (row.unit.soldiers.contains(row)){
+			row.unit.removeSoldier(row);
+		}
+	}
+
 	@Override
 	public String getName() {
 		return NAME;

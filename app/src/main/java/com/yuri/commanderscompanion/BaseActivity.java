@@ -54,10 +54,16 @@ public abstract class BaseActivity extends AppCompatActivity {
                 Intent intent = SettingsActivity.makeIntent(this);
                 startActivity(intent);
                 return true;
+            case R.id.toolbar_menu_refresh:
+                toolbar_menu_refresh_onClick();
+                return true;
             default:
                 return false;
         }
     }
+
+    /**The refresh button in toolbar menu onClick event*/
+    public void toolbar_menu_refresh_onClick(){}
 
     /**Set the view objects*/
     public void setViews(){

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -23,7 +24,9 @@ import dbAPI.IRow;
 /**Represents the main starting activity of the app*/
 public class UnitsOverviewActivity extends BaseActivity {
 
+    /**The scroll view for all the units*/
     public ScrollView scroll;
+    /**The vertical layout inside the scroll with all unit layouts*/
     public LinearLayout vertical_layout;
 
     /**The top level units*/
@@ -39,44 +42,14 @@ public class UnitsOverviewActivity extends BaseActivity {
         units = new ArrayList<OrganisationalUnit>();
         top_units = new ArrayList<OrganisationalUnit>();
 
-        // ---- DEBUG ----
-        OrganisationalUnit a, a1, a1A, a1B, a2, a2A, a2B, b, b1, b1A, b1B, b2, b2A, b2B, C, CA, CB, CC;
-        {
-            a1A = new OrganisationalUnit("כיתה", "א1א");
-            a1B = new OrganisationalUnit("כיתה", "א1ב");
-            a2A = new OrganisationalUnit("כיתה", "א2א");
-            a2B = new OrganisationalUnit("כיתה", "א2ב");
-            b1A = new OrganisationalUnit("כיתה", "ב1א");
-            b1B = new OrganisationalUnit("כיתה", "ב1ב");
-            b2A = new OrganisationalUnit("כיתה", "ב2א");
-            b2B = new OrganisationalUnit("כיתה", "ב22");
-            CA = new OrganisationalUnit("כיתה", "3א");
-            CB = new OrganisationalUnit("כיתה", "3ב");
-            CC = new OrganisationalUnit("כיתה", "3ג");
-
-            a1 = new OrganisationalUnit("מחלקה", "א1", a1A, a1B);
-            a2 = new OrganisationalUnit("מחלקה", "א2", a2A, a2B);
-            b1 = new OrganisationalUnit("מחלקה", "ב1", b1A, b1B);
-            b2 = new OrganisationalUnit("מחלקה", "ב2", b2A, b2B);
-            C = new OrganisationalUnit("מחלקה", "3", CA, CB, CC);
-
-            a = new OrganisationalUnit("פלוגה", "א", a1, a2);
-            b = new OrganisationalUnit("פלוגה", "ב", b1, b2);
-
-            GeneralHelper.currentUnit = new OrganisationalUnit("Unit", "Virtual",
-                    a1A, a1B, a2A, a2B, b1A, b1B, b2A, b2B, CA, CB, CC, a1, a2, b1, b2, C, a, b);
-        }
-        // ---- DEBUG ----
-
-        top_units.addAll(GeneralHelper.currentUnit.getSubUnits());
-
-        loadUnits();
-
-        GeneralHelper.quickSort(top_units,
-                (u1, u2) -> GeneralHelper.stringCompare(u1.getName(), u2.getName()));
-
         setViews();
         configureViews();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        toolbar_menu_refresh_onClick();
     }
 
     /**Create an intent pointing to this activity
@@ -90,12 +63,6 @@ public class UnitsOverviewActivity extends BaseActivity {
     /**Load all the units*/
     public void loadUnits(){
         Stack<OrganisationalUnit> stack = new Stack<>();
-
-        //debug
-        for (OrganisationalUnit unit : top_units){
-            stack.push(unit);
-        }
-        //debug
 
         for (IRow row : Database.UNITS){
             OrganisationalUnit unit = (OrganisationalUnit)row;
@@ -119,6 +86,9 @@ public class UnitsOverviewActivity extends BaseActivity {
             }
         }//while
         units.clear();
+
+        GeneralHelper.quickSort(top_units,
+                (u1, u2) -> GeneralHelper.stringCompare(u1.getName(), u2.getName()));
     }//loadUnits()
 
     /**Create a LinearLayout of a unit unit and it's sub units
@@ -142,8 +112,10 @@ public class UnitsOverviewActivity extends BaseActivity {
         parent.addView(mother);
 
         ArrayList<OrganisationalUnit> subUnits = new ArrayList<>(unit.getSubUnits());
-        GeneralHelper.quickSort(subUnits,
-                (u1, u2) -> GeneralHelper.stringCompare(u1.getName(), u2.getName()));
+        if (unit.hasSubUnits()) {
+            GeneralHelper.quickSort(subUnits,
+                    (u1, u2) -> GeneralHelper.stringCompare(u1.getName(), u2.getName()));
+        }
         for (OrganisationalUnit sub : subUnits){
             if (sub.hasSubUnits()){
                 createUnitLayout(sub, level + 1, mother);
@@ -174,14 +146,16 @@ public class UnitsOverviewActivity extends BaseActivity {
 
         TextView text = new TextView(this);
         params = new LinearLayout.LayoutParams(
-                0, LinearLayout.LayoutParams.MATCH_PARENT, 1);
+                0, LinearLayout.LayoutParams.WRAP_CONTENT, 1);
         text.setLayoutParams(params);
         String str = "";
         if (level > 0){
             str = "|" + GeneralHelper.multiplyString("=", level) + ">";
         }
         text.setText(str + unit.getType() + " " + unit.getName());
+        text.setTag(unit);
         TextViewCompat.setAutoSizeTextTypeWithDefaults(text, TextViewCompat.AUTO_SIZE_TEXT_TYPE_UNIFORM);
+        TextViewCompat.setTextAppearance(text, R.style.TextAppearance_AppCompat_Large);
         text.setOnClickListener(this::onUnitClick);
         row.addView(text);
 
@@ -189,8 +163,9 @@ public class UnitsOverviewActivity extends BaseActivity {
         ImageButton arrowButton = new ImageButton(this);
         int size = GeneralHelper.dpToPixels(this, 24);
 //        params = new LinearLayout.LayoutParams(
-//            ViewGroup.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+//                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         params = new LinearLayout.LayoutParams(size, size);
+        params.gravity = Gravity.CENTER;
         arrowButton.setLayoutParams(params);
         if (unit.hasSubUnits()) {
             arrowButton.setAdjustViewBounds(false);
@@ -208,7 +183,7 @@ public class UnitsOverviewActivity extends BaseActivity {
         layout.addView(row);
     }
 
-    /**The method that gets called whenever the arrow button near the unit name gets clicked
+    /**The method that gets called whenever the arrow button near the unit name gets clicked.
      * The button folds/expands the sub units of the unit that was clicked
      * @param view The arrow button
      */
@@ -240,12 +215,30 @@ public class UnitsOverviewActivity extends BaseActivity {
         }
     }
 
-    /**TODO:Write
-     * @param view
+    /**The method that gets called when a text view with the unit's name is clicked.
+     * The click opens the unit activity
+     * @param view The text view that was clicked
      */
     public void onUnitClick(View view){
         OrganisationalUnit unit = (OrganisationalUnit) view.getTag();
-        //TODO:Finish
+
+        GeneralHelper.currentUnit = unit;
+        startActivity(UnitActivity.makeIntent(this));
+    }
+
+    @Override
+    public void toolbar_menu_refresh_onClick() {
+        super.toolbar_menu_refresh_onClick();
+        units.clear();
+        top_units.clear();
+
+        vertical_layout.removeAllViews();
+
+        loadUnits();
+
+        for (OrganisationalUnit unit : top_units){
+            createUnitLayout(unit, 0, vertical_layout);
+        }
     }
 
     @Override
@@ -261,10 +254,6 @@ public class UnitsOverviewActivity extends BaseActivity {
         //Set Title
         toolbar_lbl_title.setText(R.string.units_overview_title);
         //Hide the refresh button from toolbar menu
-        toolbar_menu.getMenu().findItem(R.id.toolbar_menu_refresh).setVisible(false);
-
-        for (OrganisationalUnit unit : top_units){
-            createUnitLayout(unit, 0, vertical_layout);
-        }
+//        toolbar_menu.getMenu().findItem(R.id.toolbar_menu_refresh).setVisible(false);
     }
 }
