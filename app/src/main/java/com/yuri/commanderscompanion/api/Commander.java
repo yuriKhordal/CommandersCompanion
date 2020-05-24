@@ -36,6 +36,7 @@ public class Commander extends Soldier{
 		this.id = row.getCell(ID).Value.getInt();
 		this.name = row.getCell(NAME).Value.getString();
 		this.rank = row.getCell(RANK).Value.getString();
+		this.role = row.getCell(ROLE).Value.getString();
 		this.unit = Database.UNITS.getRow(new SingularPrimaryKey(row.getCell(UNIT_ID)));
 		this.Unit = this.unit;
 		Unit.commander = this;
@@ -46,16 +47,18 @@ public class Commander extends Soldier{
 	/**Initialize a new commander with an id, unit, name, rank, and weapon
 	 * @param name The name of this commander
 	 * @param rank The rank of this commander
+	 * @param role The role of this commander
 	 * @param weapon The weapon of this commander
 	 * @param id The ID of this commander
 	 */
-	protected Commander(int id, OrganisationalUnit unit, String name, String rank, Weapon weapon) {
+	protected Commander(int id, OrganisationalUnit unit, String name, String rank, String role, Weapon weapon) {
 		this(
 			new DatabaseCell(ID, id, DatabaseDataType.INTEGER),
 			new DatabaseCell(UNIT_ID, unit.id, DatabaseDataType.INTEGER),
 			new DatabaseCell(IS_COMMANDER, true, DatabaseDataType.BOOLEAN),
 			new DatabaseCell(NAME, name, DatabaseDataType.STRING),
 			new DatabaseCell(RANK, rank, DatabaseDataType.STRING),
+			new DatabaseCell(ROLE, role, DatabaseDataType.STRING),
 			new DatabaseCell(WEAPON_SERIAL, weapon.getSerial(), DatabaseDataType.INTEGER)
 		);
 		this.id = id;

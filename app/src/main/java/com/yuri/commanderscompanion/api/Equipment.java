@@ -12,6 +12,7 @@ import dbAPI.SingularPrimaryKey;
 
 /**Represents a soldier's equipment and a row in a database*/
 public class Equipment extends SQLiteRow {
+	//TODO: Add amount
 	public static final IColumn SOLDIER_EQUIPMENT_ID = new Column("soldier_equipment_id", 0, DatabaseDataType.INTEGER,
 			Constraint.BASIC_PRIMARY_KEY_CONSTRAINT/*, Constraint.AUTO_INCREMENT*/);
 	/**The column of the equipment's owner id*/

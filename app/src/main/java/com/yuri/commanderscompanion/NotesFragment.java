@@ -21,6 +21,7 @@ import com.yuri.commanderscompanion.api.OrganisationalUnit;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import androidx.core.widget.TextViewCompat;
 import androidx.fragment.app.Fragment;
@@ -32,6 +33,8 @@ import dbAPI.IDatabaseReader;
  * create an instance of this fragment.
  */
 public class NotesFragment extends Fragment {
+    /**The name of the rowid in the bundle*/
+    private static final String ROWID_BUNDLE_NAME = "rowid";
 
     LinearLayout tbl_notes;
     Button btn_add;
@@ -45,16 +48,25 @@ public class NotesFragment extends Fragment {
 
     /**Use this factory method to create a new instance of
      * this fragment with the specified unit
+     *
+     * @param rowid The id of the notes' unit
      * @return A new instance of fragment NotesFragment.
      */
-    public static NotesFragment newInstance() {
-        return new NotesFragment();
+    public static NotesFragment newInstance(int rowid) {
+        NotesFragment fragment = new NotesFragment();
+        Bundle args = new Bundle();
+        args.putInt(ROWID_BUNDLE_NAME, rowid);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        unit = GeneralHelper.currentUnit;
+        if (getArguments() != null){
+            int rowid = getArguments().getInt(ROWID_BUNDLE_NAME);
+            unit = Database.UNITS.getRowById(rowid);
+        }
     }
 
     @Override
@@ -67,7 +79,7 @@ public class NotesFragment extends Fragment {
         return inflated;
     }
 
-    public void createNoteTypeLayout(ArrayList<Note> notes, String type, ViewGroup group) {
+    public void createNoteTypeLayout(List<Note> notes, String type, ViewGroup group) {
         Context context = getContext();
         LinearLayout parent = new LinearLayout(context);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
@@ -151,16 +163,24 @@ public class NotesFragment extends Fragment {
     public void btn_arrow_onClick(View view){
         ImageButton btn = (ImageButton)view;
         LinearLayout layout = (LinearLayout) btn.getParent().getParent();
-        boolean folded = (boolean)btn.getTag();
+        boolean fold = !(boolean)btn.getTag();
+        float rotation;
+        int visibility;
+
+        if (fold) {
+            rotation = 270;
+            visibility = View.GONE;
+        } else {
+            rotation = 0;
+            visibility = View.VISIBLE;
+        }
 
         for(int i = 1; i < layout.getChildCount(); i++) {
-            if (folded) {
-                layout.getChildAt(i).setVisibility(View.VISIBLE);
-            } else {
-                layout.getChildAt(i).setVisibility(View.GONE);
-            }
+            layout.getChildAt(i).setVisibility(visibility);
         }
-        btn.setTag(!folded);
+
+        btn.setRotation(rotation);
+        btn.setTag(fold);
     }
 
     public void btn_remove_onClick(View view){
@@ -217,10 +237,12 @@ public class NotesFragment extends Fragment {
     }
 
     /**Configure the views after setting them*/
-        public void configureViews(){
-        if (!unit.getNotes().isEmpty()) {
+    public void configureViews() {
+        List<Note> notes = unit.getNotes();
+
+        if (!notes.isEmpty()) {
             HashMap<NoteType, ArrayList<Note>> map = new HashMap<>();
-            for (Note note : unit.getNotes()) {
+            for (Note note : notes) {
                 NoteType type = note.getType();
                 if (!map.containsKey(type)) {
                     map.put(type, new ArrayList<>());
@@ -234,7 +256,7 @@ public class NotesFragment extends Fragment {
 
 
             for (NoteType type : types) {
-                ArrayList<Note> notes = map.get(type);
+                /*ArrayList<Note> */notes = map.get(type);
                 createNoteTypeLayout(notes, type.getName(), tbl_notes);
             }
         }

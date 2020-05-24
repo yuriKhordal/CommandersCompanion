@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.google.android.material.tabs.TabLayout;
 import com.yuri.commanderscompanion.api.AppSettings;
+import com.yuri.commanderscompanion.api.Database;
 import com.yuri.commanderscompanion.api.GeneralHelper;
 import com.yuri.commanderscompanion.api.OrganisationalUnit;
 
@@ -41,7 +42,13 @@ public class UnitActivity extends BaseActivity {
         unit = GeneralHelper.currentUnit;
 
         setViews();
-        configureViews();
+        //configureViews(); Happens in onResume() -> toolbar_menu_refresh_onClick()
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        toolbar_menu_refresh_onClick();
     }
 
     /**
@@ -52,6 +59,34 @@ public class UnitActivity extends BaseActivity {
      */
     public static Intent makeIntent(Context context) {
         return new Intent(context, UnitActivity.class);
+    }
+
+    /**Select a tab from the tab layout
+     * @param tab The tab to select
+     */
+    public void selectTab(TabLayout.Tab tab){
+        Fragment fragment;
+        if (tab == tab_notes){
+            fragment = NotesFragment.newInstance(unit.getRowId());
+        } else if (tab == tab_soldiers){
+            fragment = SoldiersFragment.newInstance(unit.getRowId());
+        } else {
+            fragment = LogsFragment.newInstance(unit.getRowId());
+        }
+        getSupportFragmentManager().beginTransaction().replace(
+                R.id.unit_side_scroll, fragment).commit();
+    }
+
+    @Override
+    public void toolbar_menu_refresh_onClick() {
+        unit = Database.UNITS.getRowById(unit.getRowId());
+        super.toolbar_menu_refresh_onClick();
+
+        if (isAfterRefresh()) {
+            TabLayout.Tab tab = tabs.getTabAt(tabs.getSelectedTabPosition());
+            selectTab(tab);
+        }
+        _after_refresh = true;
     }
 
     @Override
@@ -76,7 +111,7 @@ public class UnitActivity extends BaseActivity {
         //Set Title
         toolbar_lbl_title.setText(unit.getType() + " " + unit.getName());
         //Hide the refresh button from toolbar menu
-        toolbar_menu.getMenu().findItem(R.id.toolbar_menu_refresh).setVisible(false);
+//        toolbar_menu.getMenu().findItem(R.id.toolbar_menu_refresh).setVisible(false);
 
         if (AppSettings.isDebugMode()){
             lbl_id.setVisibility(View.VISIBLE);
@@ -91,22 +126,15 @@ public class UnitActivity extends BaseActivity {
         tabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                Fragment fragment;
-                if (tab == tab_notes){
-                    fragment = NotesFragment.newInstance();
-                } else if (tab == tab_soldiers){
-                    fragment = SoldiersFragment.newInstance("", "");
-                } else {
-                    fragment = LogsFragment.newInstance("", "");
-                }
-                getSupportFragmentManager().beginTransaction().replace(
-                        R.id.unit_side_scroll, fragment).commit();
+                selectTab(tab);
             }
             @Override
             public void onTabUnselected(TabLayout.Tab tab) { }
             @Override
             public void onTabReselected(TabLayout.Tab tab) { }
         });
-        tabs.selectTab(tab_soldiers);
+        if (!isAfterRefresh()) {
+            tabs.selectTab(tab_soldiers);
+        }
     }
 }

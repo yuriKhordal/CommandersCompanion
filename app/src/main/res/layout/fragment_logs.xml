@@ -12,25 +12,57 @@
     <LinearLayout
         android:id="@+id/test_logs"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        tools:visibility="gone">
 
         <LinearLayout
             android:id="@+id/test_type"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"></LinearLayout>
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/test_type_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/table_cell"
+                android:text="דוח 1"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+            <ImageButton
+                android:id="@+id/test_btn_type_fold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/button_pressed"
+                android:contentDescription="@string/fold_arrow"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
+                tools:src="@drawable/ic_arrow_drop_down_black_24dp" />
+
+            <ImageButton
+                android:id="@+id/test_remove_type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/button_pressed"
+                android:contentDescription="@string/remove_desc"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
+                tools:src="@drawable/ic_remove_black_24dp" />
+
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/test_entries"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <LinearLayout
                 android:id="@+id/test_log"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:gravity="center_vertical">
 
                 <TextView
@@ -48,7 +80,8 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/button_pressed"
                     android:contentDescription="@string/fold_arrow"
-                    android:padding="5dp"
+                    android:paddingStart="5dp"
+                    android:paddingEnd="5dp"
                     tools:src="@drawable/ic_arrow_drop_down_black_24dp" />
 
                 <ImageButton
@@ -57,16 +90,46 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/button_pressed"
                     android:contentDescription="@string/remove_desc"
-                    android:padding="5dp"
+                    android:paddingStart="5dp"
+                    android:paddingEnd="5dp"
                     tools:src="@drawable/ic_remove_black_24dp" />
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/test_entry"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"></LinearLayout>
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/test_solider"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:background="@drawable/table_cell"
+                    android:text="מחמד אלורידי"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+                <TextView
+                    android:id="@+id/test_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:background="@drawable/table_cell"
+                    android:gravity="center"
+                    android:text="ביחידה"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
+
+    <Button
+        android:id="@+id/logs_btn_add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/logs_btn_add"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
 </LinearLayout>

@@ -2,7 +2,6 @@ package com.yuri.commanderscompanion;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
@@ -25,8 +24,17 @@ public abstract class BaseActivity extends AppCompatActivity {
     /**The menu showed by the three dots button*/
     protected PopupMenu toolbar_menu;
 
+    /**Whether the activity is being created*/
+    private boolean on_creation_cycle;
+    /**Whether the activity was refreshed
+     * (Inheriting activities should never set this to false,
+     * only true, if refreshed in some other way)
+     */
+    protected boolean _after_refresh;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        on_creation_cycle = true;
         super.onCreate(savedInstanceState);
 
         /*if (!AppSettings.isInitialized()){
@@ -36,6 +44,24 @@ public abstract class BaseActivity extends AppCompatActivity {
         setViews();
         setSupportActionBar(toolbar);
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        on_creation_cycle = false;
+    }
+
+    /**Check if the activity is in it's creation cycle
+     * @return True if the activity is being created, false if it is being resumed
+     */
+    public final boolean isOnCreationCycle(){
+        return on_creation_cycle;
+    }
+
+    /**Check whether the activity was refreshed
+     * @return True if the activity was refreshed OR if it was resumed, false otherwise
+     */
+    public boolean isAfterRefresh() { return _after_refresh | !on_creation_cycle; }
 
     /**The toolbar's three dots button on click event
      * @param view The button
@@ -62,21 +88,27 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
 
-    /**The refresh button in toolbar menu onClick event*/
-    public void toolbar_menu_refresh_onClick(){}
+    /**The refresh button in toolbar menu onClick event
+     * <br> <br>
+     * Default functionality is calling <code>configureViews()</code> again
+     */
+    public void toolbar_menu_refresh_onClick(){
+        configureViews();
+        _after_refresh = true;
+    }
 
     /**Set the view objects*/
-    public void setViews(){
-        toolbar = (Toolbar)findViewById(R.id.main_toolbar);
-        toolbar_lbl_title = (TextView)findViewById(R.id.toolbar_lbl_title);
-        toolbar_btn_menu = (ImageButton)findViewById(R.id.toolbar_btn_menu);
+    public void setViews() {
+        toolbar = (Toolbar) findViewById(R.id.main_toolbar);
+        toolbar_lbl_title = (TextView) findViewById(R.id.toolbar_lbl_title);
+        toolbar_btn_menu = (ImageButton) findViewById(R.id.toolbar_btn_menu);
         toolbar_menu = new PopupMenu(this, toolbar_btn_menu);
     }
 
     /**Configure the views after setting them*/
     public void configureViews() {
+        toolbar_menu.getMenu().clear();
         toolbar_menu.setOnMenuItemClickListener(this::toolbar_btn_menu_onMenuItemClick);
-        MenuInflater inflater = toolbar_menu.getMenuInflater();
-        inflater.inflate(R.menu.toolbar_menu, toolbar_menu.getMenu());
+        toolbar_menu.inflate(R.menu.toolbar_menu);
     }
 }

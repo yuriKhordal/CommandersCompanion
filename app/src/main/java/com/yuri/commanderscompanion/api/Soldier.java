@@ -29,9 +29,11 @@ public class Soldier extends SQLiteRow{
 			Constraint.NOT_NULL);
 	/**The column of the soldier's rank*/
 	public static final Column RANK = new Column("rank", 4, DatabaseDataType.STRING);
+	/**The column of the soldier's role*/
+	public static final Column ROLE = new Column("role", 5, DatabaseDataType.STRING);
 	/**The column of the soldier's weapon serial*/
 	//column constructor sets the constraint's column to itself so null is acceptable
-	public static final Column WEAPON_SERIAL = new Column("weapon_serial", 5, DatabaseDataType.INTEGER,
+	public static final Column WEAPON_SERIAL = new Column("weapon_serial", 6, DatabaseDataType.INTEGER,
 			new ForeignKeyConstraint("weapon_serial", Weapons.NAME + '(' + Weapon.SERIAL.getName() + ')'));
 	
 	/**This soldier's service number*/
@@ -40,6 +42,8 @@ public class Soldier extends SQLiteRow{
 	protected String name;
 	/**This soldier's rank*/
 	protected String rank;
+	/**This soldier's role*/
+	protected String role;
 	/**This soldier's weapon*/
 	protected Weapon weapon;
 	/**The unit the soldier is in*/
@@ -69,20 +73,23 @@ public class Soldier extends SQLiteRow{
 	 * @param unit The soldier's unit
 	 * @param name The soldier's name
 	 * @param rank The soldier's rank
+	 * @param role The soldier's role
 	 * @param id The soldier's service number
 	 */
-	public Soldier(OrganisationalUnit unit, String name, String rank, int id){
+	public Soldier(OrganisationalUnit unit, String name, String rank, String role, int id){
 		this(
 			new DatabaseCell(ID, id, DatabaseDataType.INTEGER),
 			new DatabaseCell(UNIT_ID, unit.id, DatabaseDataType.INTEGER),
 			new DatabaseCell(IS_COMMANDER, 0, DatabaseDataType.INTEGER),
 			new DatabaseCell(NAME, name, DatabaseDataType.STRING),
 			new DatabaseCell(RANK, rank, DatabaseDataType.STRING),
+			new DatabaseCell(ROLE, role, DatabaseDataType.STRING),
 			new DatabaseCell(WEAPON_SERIAL, null, DatabaseDataType.INTEGER)
 		);
 		this.unit = unit;
 		this.name = name;
 		this.rank = rank;
+		this.role = role;
 		this.id = id;
 	}
 
@@ -90,21 +97,24 @@ public class Soldier extends SQLiteRow{
 	 * @param unit The soldier's unit
 	 * @param name The soldier's name
 	 * @param rank The soldier's rank
+	 * @param role The soldier's role
 	 * @param weapon The soldier's weapon
 	 * @param id The soldier's service number
 	 */
-	public Soldier(OrganisationalUnit unit, String name, String rank, Weapon weapon, int id){
+	public Soldier(OrganisationalUnit unit, String name, String rank,String role, Weapon weapon, int id){
 		this(
 			new DatabaseCell(ID, id, DatabaseDataType.INTEGER),
 			new DatabaseCell(UNIT_ID, unit.id, DatabaseDataType.INTEGER),
 			new DatabaseCell(IS_COMMANDER, 0, DatabaseDataType.INTEGER),
 			new DatabaseCell(NAME, name, DatabaseDataType.STRING),
 			new DatabaseCell(RANK, rank, DatabaseDataType.STRING),
+			new DatabaseCell(ROLE, role, DatabaseDataType.STRING),
 			new DatabaseCell(WEAPON_SERIAL, weapon.getSerial(), DatabaseDataType.INTEGER)
 		);
 		this.unit = unit;
 		this.name = name;
 		this.rank = rank;
+		this.role = role;
 		this.weapon = weapon;
 		this.id = id;
 	}
@@ -132,6 +142,11 @@ public class Soldier extends SQLiteRow{
 		} else {
 			this.rank = temp.getString();
 		}
+		if ((temp = row.getCell(ROLE).Value).Value == null){
+			role = "";
+		} else {
+			this.role = temp.getString();
+		}
 
 		if ((temp = row.getCell(WEAPON_SERIAL).Value).Value == null){
 			weapon = null;
@@ -144,7 +159,7 @@ public class Soldier extends SQLiteRow{
 	 * @return All the columns in the row
 	 */
 	public static IColumn[] getStaticColumns() {
-		return new IColumn[] { ID, UNIT_ID, IS_COMMANDER, NAME, RANK, WEAPON_SERIAL };
+		return new IColumn[] { ID, UNIT_ID, IS_COMMANDER, NAME, RANK, ROLE, WEAPON_SERIAL };
 	}
 	
 	/**Checks whether the soldier is from the commanders table
@@ -189,6 +204,19 @@ public class Soldier extends SQLiteRow{
 	public void setRank(String rank) {
 		this.rank = rank;
 		this.setValue(RANK.getIndex(), new DatabaseValue(rank, DatabaseDataType.STRING));
+	}
+
+	/**Get this soldier's role
+	 * @return The role of this soldier
+	 */
+	public String getRole() { return role; }
+
+	/**Set this soldier's role
+	 * @param role The role for this soldier
+	 */
+	public void setRole(String role) {
+		this.role = role;
+		this.setValue(ROLE.getIndex(), new DatabaseValue(role, DatabaseDataType.STRING));
 	}
 
 	/**Get this soldier's unit
@@ -253,7 +281,7 @@ public class Soldier extends SQLiteRow{
 	public boolean equals(Object obj) {
 		if (!super.equals(obj)) { return false; }
 		Soldier soldier = (Soldier)obj;
-		return  soldier.id == id;
+		return soldier.id == id;
 	}
 
 	@Override

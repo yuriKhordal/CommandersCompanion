@@ -191,6 +191,26 @@ public class OrganisationalUnit extends SQLiteRow  {
 		Database.UNIT_PARENTS.add(unit, this);
 	}
 
+	/**Remove the log from the unit
+	 * @param log The log to remove
+	 */
+	public void removeLog(Log log){
+		logs.remove(log);
+		if (Database.LOGS.hasRow(log)){
+			Database.LOGS.removeRow(log);
+		}
+	}
+
+	/**Remove the note from the unit
+	 * @param note The note to remove
+	 */
+	public void removeNotes(Note note){
+		notes.remove(note);
+		if (Database.NOTES.hasRow(note)){
+			Database.NOTES.removeRow(note);
+		}
+	}
+
 	/**Remove the soldier from the unit
 	 * @param soldier The soldier to remove
 	 */

@@ -16,6 +16,9 @@
     <string name="unit_tab_soldiers">חיילים</string>
     <string name="unit_tab_logs">דוחות</string>
     <string name="notes_btn_add">הערה חדשה</string>
+    <string name="logs_btn_add">דוח חדש</string>
+    <string name="soldiers_btn_add">חייל חדש</string>
+    <string name="soldiers_lbl_sort">מיין לפי</string>
 
     <!--Note Activity-->
     <string name="note_type">קטגוריה</string>
@@ -39,6 +42,10 @@
     <string name="dialog_add">הוסף</string>
     <string name="dialog_cancel">בטל</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!--Arrays-->
+    <string-array name="cmb_sort_by">
+        <item>דרגה</item>
+        <item>שם</item>
+        <item>תפקיד</item>
+    </string-array>
 </resources>

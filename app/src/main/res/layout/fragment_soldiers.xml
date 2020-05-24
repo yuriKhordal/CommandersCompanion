@@ -1,132 +1,119 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".SoldiersFragment"
-    android:id="@+id/notes_tbl"
-    android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="#DCDCDC"
-    android:shrinkColumns="1"
-    android:stretchColumns="1,2">
+    android:layoutDirection="rtl"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent">
 
-    <TableRow
-        android:id="@+id/unit_test_row_soldier"
+    <TextView
+        android:id="@+id/soldiers_lbl_sort"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="5dp"
+        android:text="@string/soldiers_lbl_sort"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        app:layout_constraintEnd_toStartOf="@+id/soldiers_cmb_sort"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Spinner
+        android:id="@+id/soldiers_cmb_sort"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:entries="@array/cmb_sort_by"
+        app:layout_constraintBottom_toBottomOf="@+id/soldiers_lbl_sort"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/soldiers_lbl_sort"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TableLayout
+        android:id="@+id/soldiers_tbl"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:background="#DCDCDC"
+        android:stretchColumns="1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/soldiers_lbl_sort"
+        tools:context=".SoldiersFragment">
 
-        <TextView
-            android:id="@+id/test_id"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_column="0"
-            android:background="@drawable/table_cell"
-            android:text="8498975"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            app:autoSizeTextType="none" />
+        <TableRow
+            android:id="@+id/unit_test_row_soldier"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/test_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_column="1"
-            android:background="@drawable/table_cell"
-            android:text="יורי חורדל"
-            android:textAlignment="center"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            app:autoSizeTextType="none" />
+            <TextView
+                android:id="@+id/test_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_column="0"
+                android:background="@drawable/table_cell"
+                android:text="8498975"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
-        <TextView
-            android:id="@+id/test_rank"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_column="2"
-            android:background="@drawable/table_cell"
-            android:text='סמ"ר'
-            android:textAlignment="center"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            app:autoSizeTextType="none" />
+            <TextView
+                android:id="@+id/test_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_column="1"
+                android:background="@drawable/table_cell"
+                android:text="יורי חורדל"
+                android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
-        <ImageButton
-            android:id="@+id/test_remove_soldier"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_column="3"
-            android:layout_gravity="center"
-            android:background="@drawable/button_pressed"
-            android:contentDescription="remove"
-            android:paddingStart="5dp"
-            android:paddingEnd="5dp"
-            app:srcCompat="@drawable/ic_remove_black_24dp" />
-    </TableRow>
+            <TextView
+                android:id="@+id/test_rank"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_column="2"
+                android:background="@drawable/table_cell"
+                android:text='סמ"ר'
+                android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
-    <TableRow
-        android:id="@+id/unit_test_row_notes"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+            <TextView
+                android:id="@+id/test_role"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_column="3"
+                android:background="@drawable/table_cell"
+                android:text="לוחם"
+                android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
-        <TextView
-            android:id="@+id/test_head"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_column="0"
-            android:background="@drawable/table_cell"
-            android:text="להחזיר בלאי"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            app:autoSizeTextType="none" />
+            <ImageButton
+                android:id="@+id/test_remove_soldier"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_column="4"
+                android:layout_gravity="center"
+                android:background="@drawable/button_pressed"
+                android:contentDescription="remove"
+                app:srcCompat="@drawable/ic_remove_black_24dp" />
+        </TableRow>
 
-        <TextView
-            android:id="@+id/test_body"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_column="1"
-            android:background="@drawable/table_cell"
-            android:lines="1"
-            android:text="אלורידי - מימיה"
-            android:textAlignment="center"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            app:autoSizeTextType="none" />
+    </TableLayout>
 
-        <ImageButton
-            android:id="@+id/test_remove_note"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_column="3"
-            android:layout_gravity="center"
-            android:background="@drawable/button_pressed"
-            android:contentDescription="remove"
-            android:paddingStart="5dp"
-            android:paddingEnd="5dp"
-            app:srcCompat="@drawable/ic_remove_black_24dp" />
+    <Button
+        android:id="@+id/soldiers_btn_add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_column="1"
+        android:layout_marginTop="5dp"
+        android:text="@string/soldiers_btn_add"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/soldiers_tbl" />
 
-    </TableRow>
-
-    <TableRow
-        android:id="@+id/test_log"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <TextView
-            android:id="@+id/test_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_column="0"
-            android:background="@drawable/table_cell"
-            android:text="2020/05/09 12:36"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            app:autoSizeTextType="none" />
-
-        <ImageButton
-            android:id="@+id/test_remove_log"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_column="3"
-            android:layout_gravity="center"
-            android:background="@drawable/button_pressed"
-            android:contentDescription="remove"
-            android:paddingStart="5dp"
-            android:paddingEnd="5dp"
-            app:srcCompat="@drawable/ic_remove_black_24dp" />
-    </TableRow>
-
-</TableLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

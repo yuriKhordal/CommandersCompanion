@@ -228,7 +228,6 @@ public class UnitsOverviewActivity extends BaseActivity {
 
     @Override
     public void toolbar_menu_refresh_onClick() {
-        super.toolbar_menu_refresh_onClick();
         units.clear();
         top_units.clear();
 

@@ -74,22 +74,8 @@ public class NoteActivity extends BaseActivity {
         setContentView(R.layout.activity_note);
 
         setViews();
-        int rowid = getIntent().getIntExtra(INTENT_EXTRA_ROWID_NAME, -1);
-        mode = getIntent().getIntExtra(INTENT_EXTRA_MODE_NAME, -1);
-        if (rowid == -1 || mode == -1){
-            throw new RuntimeException("Intent's rowid(" + rowid + ") or mode(" + mode + ")" +
-                    " are missing");
-        }
-        if (mode == INTENT_EXTRA_MODE_UPDATE){
-            note = Database.NOTES.getRowById(rowid);
-        } else if (mode == INTENT_EXTRA_MODE_CREATE_FOR_SOLDIER){
-            soldier = Database.SOLDIERS.getRowById(rowid);
-        } else if (mode == INTENT_EXTRA_MODE_CREATE_FOR_UNIT){
-            unit = Database.UNITS.getRowById(rowid);
-        } else if (mode == INTENT_EXTRA_MODE_CREATE_FOR_TYPE){
-            type = Database.NOTE_TYPES.getRowById(rowid);
-        }
-        configureViews();
+        toolbar_menu_refresh_onClick();
+        //configureViews();
     }
 
     /**Make an intent for starting this activity
@@ -141,8 +127,8 @@ public class NoteActivity extends BaseActivity {
     /**The update button onClick event
      * @param view The button
      */
-    public void btn_update_onClick(View view){
-        if (mode == INTENT_EXTRA_MODE_UPDATE){
+    public void btn_update_onClick(View view) {
+        if (mode == INTENT_EXTRA_MODE_UPDATE) {
             String head, body;
             head = txt_head.getText().toString();
             body = txt_body.getText().toString();
@@ -150,35 +136,56 @@ public class NoteActivity extends BaseActivity {
                     new DatabaseCell(Note.HEAD, head, DatabaseDataType.STRING),
                     new DatabaseCell(Note.BODY, body, DatabaseDataType.STRING));
             Database.UPDATES.update();
-            Toast.makeText(this , "ההערה " + head + " עודכנה בהצלחה",
+            Toast.makeText(this, "ההערה " + head + " עודכנה בהצלחה",
                     Toast.LENGTH_LONG).show();
-        } else {
-            String head, body;
-            head = txt_head.getText().toString();
-            body = txt_body.getText().toString();
-            if (types.isEmpty()){
-                Toast.makeText(this,
-                        "אי אפשר ליצור הערה ללא קטגוריה", Toast.LENGTH_LONG).show();
-                return;
-            }else if (mode != INTENT_EXTRA_MODE_CREATE_FOR_TYPE) {
-                type = types.get(cmb_type.getSelectedItemPosition());
-            }
-
-            if (head.isEmpty() && body.isEmpty()){
-                Toast.makeText(this,
-                        "אי אפשר ליצור הערה ריקה, חייב להוסיף לפחות כותרת או את גוף ההערה",
-                        Toast.LENGTH_LONG).show();
-                return;
-            }
-            note = new Note(type, head, body);
-            Database.NOTES.add(note);
-            note = Database.NOTES.getLastRowAdded();
-
-            mode = INTENT_EXTRA_MODE_UPDATE;
-            Toast.makeText(this , "ההערה " + note.getHead() + " הוספה בהצלחה",
-                    Toast.LENGTH_LONG).show();
-            configureViews();
+            return;
+        } /*else {*/
+        String head, body;
+        head = txt_head.getText().toString();
+        body = txt_body.getText().toString();
+        if (types.isEmpty()) {
+            Toast.makeText(this,
+                    "אי אפשר ליצור הערה ללא קטגוריה", Toast.LENGTH_LONG).show();
+            return;
+        } else if (mode != INTENT_EXTRA_MODE_CREATE_FOR_TYPE) {
+            type = types.get(cmb_type.getSelectedItemPosition());
         }
+
+        if (head.isEmpty() && body.isEmpty()) {
+            Toast.makeText(this,
+                    "אי אפשר ליצור הערה ריקה, חייב להוסיף לפחות כותרת או את גוף ההערה",
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
+        note = new Note(type, head, body);
+        Database.NOTES.add(note);
+        note = Database.NOTES.getLastRowAdded();
+
+        mode = INTENT_EXTRA_MODE_UPDATE;
+        Toast.makeText(this, "ההערה " + note.getHead() + " הוספה בהצלחה",
+                Toast.LENGTH_LONG).show();
+        toolbar_menu_refresh_onClick();
+        //}//else closure
+    }
+
+    @Override
+    public void toolbar_menu_refresh_onClick() {
+        int rowid = getIntent().getIntExtra(INTENT_EXTRA_ROWID_NAME, -1);
+        mode = getIntent().getIntExtra(INTENT_EXTRA_MODE_NAME, -1);
+        if (rowid == -1 || mode == -1){
+            throw new RuntimeException("Intent's rowid(" + rowid + ") or mode(" + mode + ")" +
+                    " are missing");
+        }
+        if (mode == INTENT_EXTRA_MODE_UPDATE){
+            note = Database.NOTES.getRowById(rowid);
+        } else if (mode == INTENT_EXTRA_MODE_CREATE_FOR_SOLDIER){
+            soldier = Database.SOLDIERS.getRowById(rowid);
+        } else if (mode == INTENT_EXTRA_MODE_CREATE_FOR_UNIT){
+            unit = Database.UNITS.getRowById(rowid);
+        } else if (mode == INTENT_EXTRA_MODE_CREATE_FOR_TYPE){
+            type = Database.NOTE_TYPES.getRowById(rowid);
+        }
+        super.toolbar_menu_refresh_onClick();
     }
 
     @Override
@@ -205,6 +212,10 @@ public class NoteActivity extends BaseActivity {
                 txt_id.setVisibility(View.VISIBLE);
                 txt_id.setText(String.valueOf(note.getId()));
             }
+
+            //Hide the settings options in toolbar menu
+            toolbar_menu.getMenu().findItem(R.id.toolbar_menu_settings).setVisible(false);
+
             cmb_type.setAdapter(new ArrayAdapter<>(this,
                     android.R.layout.simple_spinner_item, new String[]{note.getType().getName()}));
             cmb_type.setSelection(0);
@@ -216,6 +227,9 @@ public class NoteActivity extends BaseActivity {
             toolbar_lbl_title.setText(R.string.unit_update_title);
             return;
         }
+
+        //Hide the toolbar menu
+        toolbar_btn_menu.setVisibility(View.GONE);
 
         types = new ArrayList<>();
         typeNames = new ArrayList<>(types.size());
