@@ -209,9 +209,9 @@ public class NotesFragment extends Fragment {
                 tbl_notes.removeView(parent);
             Database.NOTE_TYPES.removeRow(note.getType());
             });
-            builder2.create().show();
+            GeneralHelper.setDialogRTL(builder2.create()).show();
         });
-        builder.create().show();
+        GeneralHelper.setDialogRTL(builder.create()).show();
     }
 
     public void btn_add_onClick(View view){

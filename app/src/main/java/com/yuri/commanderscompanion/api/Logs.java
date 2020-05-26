@@ -32,6 +32,16 @@ public class Logs extends SQLiteTable<Log> {
 	}
 
 	@Override
+	public void removeRow(Log log) {
+		super.removeRow(log);
+		for (LogEntry entry : log.entries){
+			Database.ENTRIES.removeRow(entry);
+		}
+		log.entries.clear();
+		log.unit.logs.remove(log);
+	}
+
+	@Override
 	public String getName() {
 		return NAME;
 	}

@@ -57,7 +57,7 @@ public class LogEntry extends SQLiteRow {
 		
 		this.id = last_id++;
 		this.log = log;
-		log.entries.add(this);
+		//log.entries.add(this);
 		this.soldier = soldier;
 		this.text = text;
 	}

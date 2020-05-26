@@ -24,7 +24,8 @@ public class SQLiteDatabaseHelper implements IDatabaseHelper { //TODO: create ro
     public static final String TAG = "SQLiteDatabaseHelper";
     /*public static final DateTimeFormatter DATE_TIME_FORMATTER =
             DateTimeFormatter.ofPattern("yyyy/MM/dd kk:mm");*/ //API level 26 needed
-    public static final SimpleDateFormat SIMPLE_DATE_FORMATTER = new SimpleDateFormat("yyyy/MM/dd kk:mm");
+    public static final SimpleDateFormat SIMPLE_DATE_FORMATTER = new SimpleDateFormat("yyyy/MM/dd");
+    public static final SimpleDateFormat SIMPLE_DATETIME_FORMATTER = new SimpleDateFormat("yyyy/MM/dd kk:mm");
     /**The sqlite database*/
     protected SQLiteDatabase db;
     /**The path to the database*/
@@ -418,7 +419,7 @@ public class SQLiteDatabaseHelper implements IDatabaseHelper { //TODO: create ro
                 return new String(hexString);
             case DATETIME:
                 Date date = (Date)value.Value;
-                return "'" + SIMPLE_DATE_FORMATTER.format(date) + "'";
+                return "'" + SIMPLE_DATETIME_FORMATTER.format(date) + "'";
             /*case DOUBLE: value.getDouble().toString(); break;
             case INTEGER: value.getInteger().toString(); break;*/
             case STRING: return "'" + value.getString() + "'";

@@ -1,7 +1,10 @@
 package com.yuri.commanderscompanion.api;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.view.View;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
@@ -39,6 +42,12 @@ public final class GeneralHelper {
         return hash;
     }
 
+    /**Check if two objects are equal, if one of them is null return false, but if both are null,
+     * return true
+     * @param obj1 The first object to compare
+     * @param obj2 The second object to compare
+     * @return True if they are equal, false if not
+     */
     public static boolean equals(Object obj1, Object obj2){
         if (obj1 == null){
             return obj2 == null;
@@ -102,11 +111,21 @@ public final class GeneralHelper {
         return str.toString();
     }
 
+    /**Convert dp to pixels
+     * @param context A context for getting screen density
+     * @param dp The amount of dp to convert
+     * @return The dp converted to normal pixels
+     */
     public static int dpToPixels(Context context, int dp){
         float density = context.getResources().getDisplayMetrics().density;
         return (int)(dp * density + 0.5f);
     }
 
+    /**Apply the quick sort algorithm on a list
+     * @param list The list to sort
+     * @param comparator A comparator that compares two items for deciding what goes before what
+     * @param <T> The type of data in the list
+     */
     public static <T> void quickSort(List<T> list, Comparator<T> comparator){
         Stack<Integer> pivotIndex = new Stack<Integer>();
         Stack<Integer> startIndex = new Stack<Integer>();
@@ -169,6 +188,26 @@ public final class GeneralHelper {
                 endIndex.push(end);
             }
         }
+    }
+
+    /**Get all the soldiers from a unit and it's children
+     * @param unit The unit to search
+     * @return An array list of all the soldiers in the unit
+     */
+    public static ArrayList<Soldier> getAllSoldiersFromUnit(OrganisationalUnit unit){
+        ArrayList<Soldier> soldiers = new ArrayList<>();
+        Stack<OrganisationalUnit> stack = new Stack<>();
+
+        stack.push(unit);
+        while (!stack.isEmpty()){
+            OrganisationalUnit sub = stack.pop();
+
+            soldiers.addAll(sub.getSoldiers());
+            soldiers.add(sub.getCommander());
+            stack.addAll(sub.getSubUnits());
+        }
+
+        return soldiers;
     }
 
     /**Insert data into database to test all tables*/
@@ -316,6 +355,20 @@ public final class GeneralHelper {
         }
     }
 
+    /**Compare the two strings, such as if s1 < s2 returns -1, if s1 > s2 returns 1, and if s1 = s2
+     * returns 0 <br> <br>
+     * - If both are null or empty, s1 = s2 <br>
+     * - If both have are of same length and their characters are the same, s1 = s2 <br>
+     * - If s1 is null or empty while s2 is not, s1 < s2 <br>
+     * - If s2 is null or empty while s1 in not, s1 > s2 <br>
+     * - The first non equal character of the strings determines which string is considered greater,
+     * for example, for s1: "abf", s2: "acf", the result would be s1 < s2 <br>
+     * - If one string is shorter then the other, while being identical in it's start the longer
+     * is considered greater, such as for s1: "ab", s2: "abc", the result would be s1 < s2
+     * @param s1 The first string
+     * @param s2 The second string
+     * @return On s1 > s2 returns 1, on s1 = s2 returns 0, and on s1 < s2 returns -1
+     */
     public static int stringCompare(String s1, String s2){
         //if s1 is empty and s2 is not, then s1 < s2
         if (s1 == null || s1.equals("")){
@@ -342,6 +395,28 @@ public final class GeneralHelper {
             }
         }
 
-        return 0;
+        return s1.length() == s2.length() ? 0 : -1;
+    }
+
+    /**Set an alert dialog to be rtl
+     * @param dialog The dialog
+     * @return The dialog with rtl layout
+     */
+    public static AlertDialog setDialogRTL(AlertDialog dialog){
+        dialog.setOnShowListener(dialogInterface -> {
+            dialog.getWindow().getDecorView().setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
+        });
+        return dialog;
+    }
+
+    /**Set an alert dialog to be rtl
+     * @param dialog The dialog
+     * @return The dialog with rtl layout
+     */
+    public static androidx.appcompat.app.AlertDialog setDialogRTL(androidx.appcompat.app.AlertDialog dialog){
+        dialog.setOnShowListener(dialogInterface -> {
+            dialog.getWindow().getDecorView().setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
+        });
+        return dialog;
     }
 }

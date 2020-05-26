@@ -56,7 +56,7 @@ public class Notice extends SQLiteRow {
 		this(
 				new DatabaseCell(ID, null, DatabaseDataType.INTEGER),
 				new DatabaseCell(SOLDIER_ID, soldier.id, DatabaseDataType.INTEGER),
-				new DatabaseCell(DATE, SQLiteDatabaseHelper.SIMPLE_DATE_FORMATTER.format(date),
+				new DatabaseCell(DATE, SQLiteDatabaseHelper.SIMPLE_DATETIME_FORMATTER.format(date),
 						DatabaseDataType.STRING),
 				new DatabaseCell(SUMMARY, summary, DatabaseDataType.STRING),
 				new DatabaseCell(PUNISHMENT, punishment, DatabaseDataType.STRING)
@@ -82,7 +82,7 @@ public class Notice extends SQLiteRow {
 		this.soldier = Database.SOLDIERS.getRow(new SingularPrimaryKey(row.getCell(SOLDIER_ID)));
 		this.soldier.notices.add(this);
 		try {
-			this.date = SQLiteDatabaseHelper.SIMPLE_DATE_FORMATTER.parse(row.getCell(DATE).Value.getString());
+			this.date = SQLiteDatabaseHelper.SIMPLE_DATETIME_FORMATTER.parse(row.getCell(DATE).Value.getString());
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
@@ -102,7 +102,7 @@ public class Notice extends SQLiteRow {
 	 */
 	public void setDate(Date date) {
 		this.date = date;
-		setValue(DATE, new DatabaseValue(SQLiteDatabaseHelper.SIMPLE_DATE_FORMATTER.format(date),
+		setValue(DATE, new DatabaseValue(SQLiteDatabaseHelper.SIMPLE_DATETIME_FORMATTER.format(date),
 				DatabaseDataType.STRING));
 	}
 

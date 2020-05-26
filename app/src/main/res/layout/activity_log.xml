@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".NoteActivity"
-    android:layoutDirection="rtl">
+    android:layoutDirection="rtl"
+    tools:context=".LogActivity">
 
     <include
         android:id="@+id/include"
@@ -15,19 +15,19 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/note_lbl_id"
+        android:id="@+id/log_lbl_id"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:text="@string/id"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/note_txt_id"
+        app:layout_constraintBottom_toBottomOf="@+id/log_txt_id"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/note_txt_id" />
+        app:layout_constraintTop_toTopOf="@+id/log_txt_id" />
 
     <EditText
-        android:id="@+id/note_txt_id"
+        android:id="@+id/log_txt_id"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
@@ -38,102 +38,96 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/note_lbl_id"
+        app:layout_constraintStart_toEndOf="@+id/log_lbl_id"
         app:layout_constraintTop_toBottomOf="@+id/include" />
 
     <TextView
-        android:id="@+id/note_lbl_type"
+        android:id="@+id/log_lbl_type"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:text="@string/category"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        app:layout_constraintBottom_toBottomOf="@id/note_cmb_type"
+        app:layout_constraintBottom_toBottomOf="@id/log_cmb_type"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/note_cmb_type" />
+        app:layout_constraintTop_toTopOf="@id/log_cmb_type" />
 
     <Spinner
-        android:id="@+id/note_cmb_type"
+        android:id="@+id/log_cmb_type"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="20dp"
         android:spinnerMode="dialog"
-        app:layout_constraintEnd_toStartOf="@+id/note_btn_add_type"
-        app:layout_constraintStart_toEndOf="@+id/note_lbl_type"
-        app:layout_constraintTop_toBottomOf="@id/note_txt_id" />
+        app:layout_constraintEnd_toStartOf="@+id/log_btn_add_type"
+        app:layout_constraintStart_toEndOf="@+id/log_lbl_type"
+        app:layout_constraintTop_toBottomOf="@id/log_txt_id" />
 
     <ImageButton
-        android:id="@+id/note_btn_add_type"
+        android:id="@+id/log_btn_add_type"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="20dp"
         android:background="@drawable/button_pressed"
         android:onClick="btn_add_type_onClick"
-        app:layout_constraintBottom_toBottomOf="@+id/note_cmb_type"
+        app:layout_constraintBottom_toBottomOf="@+id/log_cmb_type"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/note_cmb_type"
+        app:layout_constraintTop_toTopOf="@+id/log_cmb_type"
         app:srcCompat="@drawable/ic_add_black_24dp" />
 
     <TextView
-        android:id="@+id/note_lbl_head"
+        android:id="@+id/log_lbl_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:text="@string/title"
+        android:text="@string/log_date"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        app:layout_constraintBottom_toBottomOf="@+id/note_txt_head"
+        app:layout_constraintBottom_toBottomOf="@+id/log_txt_date"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/note_txt_head" />
+        app:layout_constraintTop_toTopOf="@+id/log_txt_date" />
 
     <EditText
-        android:id="@+id/note_txt_head"
+        android:id="@+id/log_txt_date"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="20dp"
         android:ems="10"
-        android:inputType="textShortMessage"
+        android:inputType="date"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/note_lbl_head"
-        app:layout_constraintTop_toBottomOf="@id/note_cmb_type" />
+        app:layout_constraintStart_toEndOf="@+id/log_lbl_date"
+        app:layout_constraintTop_toBottomOf="@id/log_cmb_type" />
 
-    <TextView
-        android:id="@+id/note_lbl_body"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="20dp"
-        android:text="@string/note_body"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/note_txt_head" />
-
-    <EditText
-        android:id="@+id/note_txt_body"
+    <ScrollView
+        android:id="@+id/log_scroll_entries"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="20dp"
-        android:ems="10"
-        android:gravity="start"
-        android:inputType="textMultiLine"
-        android:singleLine="false"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        app:layout_constraintBottom_toTopOf="@+id/note_btn_update"
+        app:layout_constraintBottom_toTopOf="@+id/log_btn_update"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/note_lbl_body" />
+        app:layout_constraintTop_toBottomOf="@+id/log_txt_date">
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TableLayout
+                android:id="@+id/log_tbl_entries"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:stretchColumns="1" />
+        </HorizontalScrollView>
+    </ScrollView>
 
     <Button
-        android:id="@+id/note_btn_update"
+        android:id="@+id/log_btn_update"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"

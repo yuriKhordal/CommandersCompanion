@@ -59,7 +59,7 @@ public class Log extends SQLiteRow {
 			new DatabaseCell(ID, null, DatabaseDataType.INTEGER),
 			new DatabaseCell(LOG_TYPE_ID, type.id, DatabaseDataType.INTEGER),
 			//new DatabaseCell(UNIT_ID, unit.id, DatabaseDataType.INTEGER),
-			new DatabaseCell(DATE, SQLiteDatabaseHelper.SIMPLE_DATE_FORMATTER.format(time),
+			new DatabaseCell(DATE, SQLiteDatabaseHelper.SIMPLE_DATETIME_FORMATTER.format(time),
 					DatabaseDataType.STRING)
 		);
 		this.id = last_id++;
@@ -67,7 +67,7 @@ public class Log extends SQLiteRow {
 		this.time = time;
 		this.type = type;
 		this.unit = type.unit;
-		this.unit.logs.add(this);
+		//this.unit.logs.add(this);
 	}
 	
 	/**Initialize a new log from a log row
@@ -86,7 +86,7 @@ public class Log extends SQLiteRow {
 			}
 		}
 		try {
-			this.time = SQLiteDatabaseHelper.SIMPLE_DATE_FORMATTER.parse(row.getCell(DATE).Value.getString());
+			this.time = SQLiteDatabaseHelper.SIMPLE_DATETIME_FORMATTER.parse(row.getCell(DATE).Value.getString());
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}

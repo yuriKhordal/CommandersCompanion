@@ -111,6 +111,7 @@ public class SoldiersFragment extends Fragment {
             soldier.getUnit().removeSoldier(soldier);
             tbl.removeView(row);
         });
+        GeneralHelper.setDialogRTL(builder.create()).show();
     }
 
     /**The onClick event of the whole soldier row

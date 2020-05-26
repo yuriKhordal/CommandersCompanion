@@ -2,6 +2,7 @@ package com.yuri.commanderscompanion;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Pair;
 import android.view.Gravity;
@@ -126,13 +127,11 @@ public class LogsFragment extends Fragment {
         LinearLayout type_layout = new LinearLayout(context);
         type_layout.setLayoutParams(layout_params);
         type_layout.setOrientation(LinearLayout.VERTICAL);
-        //TODO: check if this layout can be added here instead of in the end
         tbl_types.addView(type_layout);
 
         //Create the type row within type_layout
         LinearLayout type_row = new LinearLayout(context);
         type_row.setLayoutParams(layout_params);
-        //TODO: check if this row can be added here instead of in the end
         type_layout.addView(type_row);
 
         TextView lbl_type_name = new TextView(context);
@@ -167,19 +166,19 @@ public class LogsFragment extends Fragment {
             LinearLayout log_layout = new LinearLayout(context);
             log_layout.setLayoutParams(layout_params);
             log_layout.setOrientation(LinearLayout.VERTICAL);
-            //TODO: check if this layout can be added here instead of in the end
             type_layout.addView(log_layout);
 
             //create a log row within row layout
             LinearLayout log_row = new LinearLayout(context);
             log_row.setLayoutParams(layout_params);
-            //TODO: check if this row can be added here instead of in the end
+            log_row.setTag(log);
+            log_row.setOnClickListener(this::tbl_row_log_onClick);
             log_layout.addView(log_row);
 
             TextView lbl_log_name = new TextView(context);
             lbl_log_name.setLayoutParams(view_params);
             lbl_log_name.setBackgroundResource(R.drawable.table_cell);
-            String date = SQLiteDatabaseHelper.SIMPLE_DATE_FORMATTER.format(log.getTime());
+            String date = SQLiteDatabaseHelper.SIMPLE_DATETIME_FORMATTER.format(log.getTime());
             lbl_log_name.setText(date);
             TextViewCompat.setTextAppearance(lbl_log_name, R.style.TextAppearance_AppCompat_Large);
             log_row.addView(lbl_log_name);
@@ -205,10 +204,10 @@ public class LogsFragment extends Fragment {
             log_row.addView(btn_log_remove);
 
             for (LogEntry entry: log.entries){
+                if (entry.getText().isEmpty()) { continue; }
                 //create an entry row
                 LinearLayout entry_row = new LinearLayout(context);
                 entry_row.setLayoutParams(layout_params);
-                //TODO: check if this row can be added here instead of in the end
                 log_layout.addView(entry_row);
 
                 TextView lbl_entry_soldier = new TextView(context);
@@ -228,6 +227,12 @@ public class LogsFragment extends Fragment {
                 entry_row.addView(lbl_entry_text);
             }
         }
+    }
+
+    public void tbl_row_log_onClick(View view){
+        Log log = (Log) view.getTag();
+        Intent intent = LogActivity.makeIntent(getContext(), log.getRowId(), LogActivity.MODE_UPDATE);
+        startActivity(intent);
     }
 
     /**The type remove button onClick event
@@ -252,7 +257,7 @@ public class LogsFragment extends Fragment {
             tbl_types.removeView(layout);
         }));
 
-        builder.create().show();
+        GeneralHelper.setDialogRTL(builder.create()).show();
     }
 
     /**The log remove button onClick event
@@ -267,7 +272,7 @@ public class LogsFragment extends Fragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle(R.string.dialog_delete_title);
         String name = log.getType().getName() + " : "
-                + SQLiteDatabaseHelper.SIMPLE_DATE_FORMATTER.format(log.getTime());
+                + SQLiteDatabaseHelper.SIMPLE_DATETIME_FORMATTER.format(log.getTime());
         builder.setMessage(getString(R.string.dialog_delete_msg, name));
         builder.setNegativeButton(R.string.dialog_no, null);
         builder.setPositiveButton(R.string.dialog_yes, ((dialogInterface, i) -> {
@@ -276,7 +281,7 @@ public class LogsFragment extends Fragment {
             parent.removeView(layout);
         }));
 
-        builder.create().show();
+        GeneralHelper.setDialogRTL(builder.create()).show();
     }
 
     /**The arrow button onClick event
@@ -309,8 +314,8 @@ public class LogsFragment extends Fragment {
      * @param view The button
      */
     public void btn_add_onClick(View view){
-        Button add = (Button) view;
-        //TODO: After adding activity, call the intent
+        Intent intent = LogActivity.makeIntent(getContext(), unit.getRowId(), LogActivity.MODE_CREATE);
+        startActivity(intent);
     }
 
     /**Set the view objects

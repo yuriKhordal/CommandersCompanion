@@ -295,4 +295,14 @@ public class GeneralHelperTest {
     public void compare_Ted_To_test(){
         Assert.assertEquals(-1, GeneralHelper.stringCompare("Ted", "test"));
     }
+
+    @Test
+    public void compare_ab_to_abc(){
+        Assert.assertEquals(-1, GeneralHelper.stringCompare("ab", "abc"));
+    }
+
+    @Test
+    public void compare_abc_to_ab(){
+        Assert.assertEquals(1, GeneralHelper.stringCompare("abc", "ab"));
+    }
 }

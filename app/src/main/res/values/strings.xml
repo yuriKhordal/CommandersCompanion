@@ -8,6 +8,10 @@
     <string name="fold_arrow">fold</string>
     <string name="remove_desc">remove</string>
     <string name="id">id</string>
+    <string name="category">קטגוריה</string>
+    <string name="title">כותרת</string>
+    <string name="create">צור</string>
+    <string name="update">עדכן</string>
 
     <!--Unit Activity-->
     <string name="unit_lbl_type">סוג: %1$s</string>
@@ -21,11 +25,10 @@
     <string name="soldiers_lbl_sort">מיין לפי</string>
 
     <!--Note Activity-->
-    <string name="note_type">קטגוריה</string>
-    <string name="note_head">כותרת</string>
     <string name="note_body">הערה</string>
-    <string name="note_create">צור</string>
-    <string name="note_update">עדכן</string>
+
+    <!--Log Activity-->
+    <string name="log_date">תאריך</string>
 
     <!--Toolbar-->
     <string name="toolbar_btn_menu_placeholder">menu</string>
@@ -36,7 +39,8 @@
     <string name="dialog_delete_title">האם אתה בטוח?</string>
     <string name="dialog_delete_msg">פעולה זאת תמחק את %1$s מהרשימה לתמיד!</string>
     <string name="dialog_note_type">האם אתה רוצה למחוק את הנושא %1$s?</string>
-    <string name="dialog_add_note_type">תן שם לקטגוריה חדשה:</string>
+    <string name="dialog_add_type">תן שם לקטגוריה חדשה:</string>
+    <string name="dialog_recursive">לכלול חיילים בתת יחידות?</string>
     <string name="dialog_yes">כן</string>
     <string name="dialog_no">לא</string>
     <string name="dialog_add">הוסף</string>

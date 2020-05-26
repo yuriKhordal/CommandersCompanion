@@ -21,9 +21,10 @@ public class Updates {
     /**Add an updated row
      * @param table The table of the row
      * @param row The row that was updated
+     * @param cells The cells to update
      */
     public void add(ITable table, SQLiteRow row, DatabaseCell...cells){
-        updates.add(new Update(table.getName(), row.getRowId()));
+        updates.add(new Update(table.getName(), row.getRowId(), cells));
     }
 
     public void update(){

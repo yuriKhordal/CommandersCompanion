@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.yuri.commanderscompanion.api.AppSettings;
 import com.yuri.commanderscompanion.api.Database;
+import com.yuri.commanderscompanion.api.GeneralHelper;
 import com.yuri.commanderscompanion.api.Note;
 import com.yuri.commanderscompanion.api.NoteType;
 import com.yuri.commanderscompanion.api.OrganisationalUnit;
@@ -97,7 +98,7 @@ public class NoteActivity extends BaseActivity {
      */
     public void btn_add_type_onClick(View view) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(R.string.dialog_add_note_type);
+        builder.setTitle(R.string.dialog_add_type);
         EditText name = new EditText(this);
         name.setLayoutParams(new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -114,14 +115,15 @@ public class NoteActivity extends BaseActivity {
                         "soldiers or units");
             }
             Database.NOTE_TYPES.add(type);
+            type = Database.NOTE_TYPES.getLastRowAdded();
 
             types.add(type);
             typeNames.add(type.getName());
-            cmb_type.setSelection(typeNames.size() - 1);
             adapter.notifyDataSetChanged();
+            cmb_type.setSelection(typeNames.size() - 1);
         }));
         builder.setNegativeButton(R.string.dialog_cancel, null);
-        builder.create().show();
+        GeneralHelper.setDialogRTL(builder.create()).show();
     }
 
     /**The update button onClick event
@@ -223,7 +225,7 @@ public class NoteActivity extends BaseActivity {
             btn_add_type.setVisibility(View.GONE);
             txt_head.setText(note.getHead());
             txt_body.setText(note.getBody());
-            btn_update.setText(R.string.note_update);
+            btn_update.setText(R.string.update);
             toolbar_lbl_title.setText(R.string.unit_update_title);
             return;
         }
